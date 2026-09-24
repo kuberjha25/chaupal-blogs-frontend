@@ -77,24 +77,26 @@ export default function Home({ data }) {
         {/* HERO */}
         {hero ? (
           <section className="hero tone-1" id="top" aria-label="Featured story">
-            <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
-            <div className="hero-panel">
-              <div className="chiprow">
-                <span className="chip">{(hero.category || '').toUpperCase()}</span>
-                <span className="chip quiet">{(hero.boli || '').toUpperCase()}</span>
+            <div className="hero-shell">
+              <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
+              <div className="hero-panel">
+                <div className="chiprow">
+                  <span className="chip">{(hero.category || '').toUpperCase()}</span>
+                  <span className="chip quiet">{(hero.boli || '').toUpperCase()}</span>
+                </div>
+                <h1 className="display">{hero.title.split(':')[0].toUpperCase()}</h1>
+                <p className="dek">{hero.dek}</p>
+                <div className="meta">{`${(hero.boli || '').toUpperCase()} · ${hero.read_minutes} MIN READ`}</div>
+                <div className="hero-ctas">
+                  <Link className="btn btn-lg" href={`/article/${hero.slug}`}>Read the full breakdown →</Link>
+                  <a className="btn btn-lg btn-ghost" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
+                    <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5 L12.5 7 L2 12.5 Z" fill="currentColor" /></svg>
+                    Watch on Chaupal
+                  </a>
+                </div>
               </div>
-              <h1 className="display">{hero.title.split(':')[0].toUpperCase()}</h1>
-              <p className="dek">{hero.dek}</p>
-              <div className="meta">{`${(hero.boli || '').toUpperCase()} · ${hero.read_minutes} MIN READ`}</div>
-              <div className="hero-ctas">
-                <Link className="btn btn-lg" href={`/article/${hero.slug}`}>Read the full breakdown →</Link>
-                <a className="btn btn-lg btn-ghost" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
-                  <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5 L12.5 7 L2 12.5 Z" fill="currentColor" /></svg>
-                  Watch on Chaupal
-                </a>
-              </div>
+              <Phulkari up style={{ position: 'absolute', left: 0, bottom: 0 }} />
             </div>
-            <Phulkari up style={{ position: 'absolute', left: 0, bottom: 0 }} />
           </section>
         ) : null}
 
