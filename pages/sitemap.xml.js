@@ -1,6 +1,7 @@
 /* Dynamic sitemap — backend /api/public/sitemap ton URLs */
+import { API_INTERNAL as API } from '@/lib/api';
+
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-const API = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export async function getServerSideProps({ res }) {
   let urls = [{ loc: '/', lastmod: null }];

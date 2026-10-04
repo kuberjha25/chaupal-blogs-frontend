@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ssrGet, api, mediaUrl } from '@/lib/api';
+import { ssrGet, api, absMediaUrl } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
 import { ArtGhost, SectionHead, SocialLinks } from '@/components/site/bits';
@@ -88,7 +88,7 @@ export default function Article({ data }) {
         <meta property="og:description" content={desc} />
         <meta property="og:url" content={url} />
         <meta property="og:site_name" content={settings.site_title} />
-        {post.image ? <meta property="og:image" content={mediaUrl(post.image)} /> : null}
+        {post.image ? <meta property="og:image" content={absMediaUrl(post.image)} /> : null}
         <meta property="article:published_time" content={post.published_at || ''} />
         <meta name="twitter:card" content="summary_large_image" />
         {settings.twitter_handle ? <meta name="twitter:site" content={settings.twitter_handle} /> : null}
@@ -105,7 +105,7 @@ export default function Article({ data }) {
                   datePublished: post.published_at,
                   dateModified: post.updated_at,
                   mainEntityOfPage: url,
-                  image: post.image ? [mediaUrl(post.image)] : undefined,
+                  image: post.image ? [absMediaUrl(post.image)] : undefined,
                   author: { '@type': 'Organization', name: post.author || 'Charcha Desk' },
                   publisher: { '@type': 'Organization', name: settings.site_title },
                 },

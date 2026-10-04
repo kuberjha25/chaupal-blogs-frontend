@@ -6,12 +6,15 @@ import { useAuth } from '@/lib/auth';
 import { Mark, Phulkari } from '@/components/site/bits';
 import { ThemeToggle } from '@/lib/ui';
 
-const DEMOS = [
+/* Seeded demo accounts — sirf dev vich. `process.env.NODE_ENV !== 'production'` literal hi rakho
+   (variable vich na pao) taan ke build time te branch fold ho ke production bundle ton strings hat jaan. */
+const DEMOS = process.env.NODE_ENV !== 'production' ? [
   { email: 'admin@chaupal.com', name: 'Ujjwal M.', role: 'ADMIN · FULL ACCESS', ini: 'UM', bg: 'var(--acc)', fg: 'var(--on-acc)', color: 'var(--acc-text)' },
   { email: 'desk@chaupal.com', name: 'Charcha Desk', role: 'PUBLISHER · AUTHOR', ini: 'CD', bg: 'var(--ok)', fg: '#fff', color: 'var(--ok)' },
   { email: 'seo@chaupal.com', name: 'Simran K.', role: 'SEO MANAGER', ini: 'SK', bg: 'var(--hv)', fg: '#fff', color: 'var(--hv)' },
   { email: 'marketing@chaupal.com', name: 'Manav S.', role: 'MARKETING AGENT', ini: 'MS', bg: 'var(--bj)', fg: '#fff', color: 'var(--bj)' },
-];
+] : [];
+const DEMO_PASS = process.env.NODE_ENV !== 'production' ? 'Chaupal@123' : '';
 
 export default function Login() {
   const router = useRouter();
@@ -66,22 +69,26 @@ export default function Login() {
               <span className="sub">Role decides what you see inside — admin sab kuchh, baki roles conditional.</span>
             </div>
 
-            <div>
-              <div className="shh" style={{ marginBottom: 12 }}>SEEDED ACCOUNTS · ONE-TAP SIGN IN</div>
-              <div className="roles">
-                {DEMOS.map((d) => (
-                  <button key={d.email} className="rolebtn" type="button" disabled={busy} onClick={() => doLogin(d.email, 'Chaupal@123')}>
-                    <span className="avatar" style={{ background: d.bg, color: d.fg }}>{d.ini}</span>
-                    <span className="rt">
-                      <span className="rn">{d.name}</span>
-                      <span className="rr" style={{ color: d.color }}>{d.role}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            {process.env.NODE_ENV !== 'production' ? (
+              <>
+                <div>
+                  <div className="shh" style={{ marginBottom: 12 }}>SEEDED ACCOUNTS · ONE-TAP SIGN IN</div>
+                  <div className="roles">
+                    {DEMOS.map((d) => (
+                      <button key={d.email} className="rolebtn" type="button" disabled={busy} onClick={() => doLogin(d.email, DEMO_PASS)}>
+                        <span className="avatar" style={{ background: d.bg, color: d.fg }}>{d.ini}</span>
+                        <span className="rt">
+                          <span className="rn">{d.name}</span>
+                          <span className="rr" style={{ color: d.color }}>{d.role}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="divider">OR SIGN IN WITH EMAIL</div>
+                <div className="divider">OR SIGN IN WITH EMAIL</div>
+              </>
+            ) : null}
 
             {err ? <div className="errbox">{err}</div> : null}
 
@@ -95,7 +102,9 @@ export default function Login() {
                 <input id="pass" type="password" placeholder="••••••••" autoComplete="current-password" required value={pass} onChange={(e) => setPass(e.target.value)} />
               </div>
               <button className="btn" type="submit" disabled={busy} style={{ height: 50 }}>{busy ? 'Signing in…' : 'Sign in →'}</button>
-              <p className="note">Seeded password sab accounts da: <b>Chaupal@123</b>. Production vich pehli login te change karwana.</p>
+              {process.env.NODE_ENV !== 'production' ? (
+                <p className="note">Seeded password sab accounts da: <b>{DEMO_PASS}</b>. Production vich pehli login te change karwana.</p>
+              ) : null}
             </form>
 
             <ThemeToggle className="pill" />

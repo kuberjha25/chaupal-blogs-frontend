@@ -1,5 +1,5 @@
 /* Catch-all — purane WordPress URLs layi 301 redirects (redirects table ton) */
-const API = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+import { API_INTERNAL as API } from '@/lib/api';
 
 export async function getServerSideProps({ params, resolvedUrl }) {
   const path = '/' + (params.path || []).join('/');
