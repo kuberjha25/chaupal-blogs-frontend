@@ -71,18 +71,28 @@ export default function StudioLayout({ title, children }) {
     if (ready && !user) router.replace('/login');
   }, [ready, user, router]);
 
+  /* Head har branch vich — SSR HTML (auth ton pehla) vich vi noindex hona chahida */
+  const head = (
+    <Head>
+      <title>{`${title} — Charcha Studio`}</title>
+      <meta name="robots" content="noindex,nofollow" />
+    </Head>
+  );
+
   if (!ready || !user) {
-    return <div className="loading" style={{ minHeight: '100vh' }}>STUDIO KHUL RAHA HAI…</div>;
+    return (
+      <>
+        {head}
+        <div className="loading" style={{ minHeight: '100vh' }}>STUDIO KHUL RAHA HAI…</div>
+      </>
+    );
   }
 
   const meta = ROLE_META[user.role] || ROLE_META.author;
 
   return (
     <>
-      <Head>
-        <title>{`${title} — Charcha Studio`}</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      {head}
       <div className="shell">
         <aside className={`side${open ? ' open' : ''}`} aria-label="Studio navigation">
           <Link className="brand" href="/studio">
@@ -122,7 +132,7 @@ export default function StudioLayout({ title, children }) {
             <button className="iconbtn menubtn" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(!open)} type="button">
               <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M3 6 H19 M3 11 H19 M3 16 H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
             </button>
-            <span className="display vtitle">{title}</span>
+            <h1 className="display vtitle">{title}</h1>
             <div className="searchbox">
               <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="2" /><path d="M13.5 13.5 L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
               <input type="search" placeholder="Search posts, media, users…" aria-label="Search" />

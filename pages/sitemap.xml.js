@@ -4,7 +4,7 @@ import { API_INTERNAL as API } from '@/lib/api';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 /* Static pages (pages/*.jsx) — backend down hove taan vi sitemap vich */
-const STATIC_PAGES = ['/privacy-policy', '/terms-and-conditions', '/contact-us'];
+const STATIC_PAGES = ['/latest', '/privacy-policy', '/terms-and-conditions', '/contact-us'];
 
 const xmlEscape = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
@@ -25,7 +25,7 @@ export async function getServerSideProps({ res }) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
-    (u) => `  <url><loc>${xmlEscape(SITE + u.loc)}</loc>${u.lastmod ? `<lastmod>${new Date(u.lastmod).toISOString()}</lastmod>` : ''}<changefreq>${u.loc === '/' ? 'daily' : 'weekly'}</changefreq></url>`
+    (u) => `  <url><loc>${xmlEscape(SITE + u.loc)}</loc>${u.lastmod ? `<lastmod>${new Date(u.lastmod).toISOString()}</lastmod>` : ''}<changefreq>${u.loc === '/' || u.loc === '/latest' ? 'daily' : 'weekly'}</changefreq></url>`
   )
   .join('\n')}
 </urlset>`;

@@ -40,7 +40,7 @@ export default function Login() {
     <>
       <Head>
         <title>Sign in — Chaupal Te Charcha Studio</title>
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex,nofollow" />
       </Head>
       <div className="split">
         <aside className="brandside">

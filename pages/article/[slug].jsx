@@ -1,22 +1,34 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ssrGet, api, absMediaUrl } from '@/lib/api';
+import { ssrGet, api, absMediaUrl, isBackendDown, markUnavailable } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
+import Unavailable from '@/components/site/Unavailable';
 import { ArtGhost, SectionHead, SocialLinks } from '@/components/site/bits';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+/* Publisher logo — public/favicon.png (64×64 PNG), site da ikko-ik logo asset */
+const LOGO = { url: `${SITE}/favicon.png`, width: 64, height: 64 };
 const boliClass = (b) => (b === 'Haryanvi' ? 'c-hv' : b === 'Bhojpuri' ? 'c-bj' : 'c-acc');
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+/* Meta / JSON-LD layi ISO 8601; invalid ya khali → undefined (tag hi nahi bannda) */
+const iso = (d) => {
+  const t = d ? new Date(d) : null;
+  return t && !Number.isNaN(t.getTime()) ? t.toISOString() : undefined;
+};
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, res }) {
   try {
-    const data = await ssrGet(`/api/public/posts/${params.slug}`);
+    const data = await ssrGet(`/api/public/posts/${encodeURIComponent(params.slug)}`);
     return { props: { data } };
   } catch (e) {
-    if (String(e.message).includes('404')) return { notFound: true };
-    return { props: { data: null } };
+    /* Backend down / 5xx → 503 (friendly page); asli 4xx (404 wagera) → 404 */
+    if (isBackendDown(e)) {
+      markUnavailable(res);
+      return { props: { data: null } };
+    }
+    return { notFound: true };
   }
 }
 
@@ -43,17 +55,20 @@ export default function Article({ data }) {
   }, [data]);
 
   if (!data) {
-    return (
-      <main className="loading" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        BACKEND SE DATA NAHI MILA — port 4000 te API chalao.
-      </main>
-    );
+    return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao.</Unavailable>;
   }
 
   const { post, toc, related, latest, settings } = data;
   const url = `${SITE}/article/${post.slug}`;
   const title = post.seo_title || post.title;
   const desc = post.seo_description || post.dek;
+  const authorName = post.author_name || post.author;
+  const published = iso(post.published_at) || iso(post.updated_at);
+  const modified = iso(post.updated_at) || iso(post.published_at);
+  const img = post.image ? absMediaUrl(post.image) : null;
+  const imgW = Number(post.image_width) || null;
+  const imgH = Number(post.image_height) || null;
+  const imgAlt = post.image_alt || post.title;
 
   const copyLink = async () => {
     try {
@@ -88,9 +103,14 @@ export default function Article({ data }) {
         <meta property="og:description" content={desc} />
         <meta property="og:url" content={url} />
         <meta property="og:site_name" content={settings.site_title} />
-        {post.image ? <meta property="og:image" content={absMediaUrl(post.image)} /> : null}
-        <meta property="article:published_time" content={post.published_at || ''} />
+        {img ? <meta property="og:image" content={img} /> : null}
+        {img && imgW ? <meta property="og:image:width" content={String(imgW)} /> : null}
+        {img && imgH ? <meta property="og:image:height" content={String(imgH)} /> : null}
+        {img ? <meta property="og:image:alt" content={imgAlt} /> : null}
+        {published ? <meta property="article:published_time" content={published} /> : null}
+        {modified ? <meta property="article:modified_time" content={modified} /> : null}
         <meta name="twitter:card" content="summary_large_image" />
+        {img ? <meta name="twitter:image:alt" content={imgAlt} /> : null}
         {settings.twitter_handle ? <meta name="twitter:site" content={settings.twitter_handle} /> : null}
         <script
           type="application/ld+json"
@@ -102,12 +122,21 @@ export default function Article({ data }) {
                   '@type': 'Article',
                   headline: post.title,
                   description: desc,
-                  datePublished: post.published_at,
-                  dateModified: post.updated_at,
+                  datePublished: published,
+                  dateModified: modified,
                   mainEntityOfPage: url,
-                  image: post.image ? [absMediaUrl(post.image)] : undefined,
-                  author: { '@type': 'Organization', name: post.author || 'Charcha Desk' },
-                  publisher: { '@type': 'Organization', name: settings.site_title },
+                  image: img
+                    ? { '@type': 'ImageObject', url: img, width: imgW || undefined, height: imgH || undefined }
+                    : undefined,
+                  author: post.author_name
+                    ? { '@type': 'Person', name: post.author_name }
+                    : { '@type': 'Organization', name: post.author || settings.site_title, url: SITE },
+                  publisher: {
+                    '@type': 'Organization',
+                    name: settings.site_title,
+                    url: SITE,
+                    logo: { '@type': 'ImageObject', ...LOGO },
+                  },
                 },
                 {
                   '@type': 'BreadcrumbList',
@@ -142,8 +171,8 @@ export default function Article({ data }) {
             <h1 className="display">{post.title.toUpperCase()}</h1>
             <p className="dek">{post.dek}</p>
             <div className="byline">
-              <span className="avatar" aria-hidden="true">{(post.author || 'CD').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</span>
-              <span className="who">By <b>{post.author || 'Charcha Desk'}</b> · {fmtDate(post.published_at)} · {post.read_minutes} min read</span>
+              <span className="avatar" aria-hidden="true">{(authorName || 'CD').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</span>
+              <span className="who">By <b>{authorName || 'Charcha Desk'}</b> · {fmtDate(post.published_at)} · {post.read_minutes} min read</span>
               <span className="vsep" aria-hidden="true" />
               <button className="mini" onClick={copyLink} aria-label="Copy link to this story" type="button">
                 <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -214,9 +243,9 @@ export default function Article({ data }) {
               ) : null}
 
               <div className="author">
-                <span className="avatar" aria-hidden="true">{(post.author || 'CD').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</span>
+                <span className="avatar" aria-hidden="true">{(authorName || 'CD').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</span>
                 <span>
-                  <span className="an">{post.author || 'Charcha Desk'}</span>
+                  <span className="an">{authorName || 'Charcha Desk'}</span>
                   <div className="ab">The editorial team behind Chaupal Te Charcha — stories, guides te full-on charcha from Chandigarh.</div>
                 </span>
               </div>
@@ -265,7 +294,7 @@ export default function Article({ data }) {
                 </Link>
               ))}
             </div>
-            <Link className="seemore" href="/#latest">See more stories →</Link>
+            <Link className="seemore" href="/latest">See more stories →</Link>
           </div>
         </section>
       </main>

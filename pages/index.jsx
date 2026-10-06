@@ -1,8 +1,9 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ssrGet } from '@/lib/api';
+import { ssrGet, markUnavailable } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
+import Unavailable from '@/components/site/Unavailable';
 import Footer from '@/components/site/Footer';
 import { ArtGhost, SectionHead, Phulkari } from '@/components/site/bits';
 import { QuizWidget, PollWidget, NewsletterForm } from '@/components/site/PlayWidgets';
@@ -18,11 +19,13 @@ const fmtCal = (d) => {
   return `${days[dt.getDay()]} · ${months[dt.getMonth()]} ${dt.getDate()}`;
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ res }) {
   try {
     const data = await ssrGet('/api/public/home');
     return { props: { data } };
   } catch (e) {
+    /* Home di koi vi backend failure temporary hai — kade 200 nahi */
+    markUnavailable(res);
     return { props: { data: null } };
   }
 }
@@ -32,11 +35,7 @@ export default function Home({ data }) {
 
   /* Backend down / seed nahi hua → frontend te koi content nahi (sab data API ton aanda) */
   if (!data) {
-    return (
-      <main className="loading" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        BACKEND SE DATA NAHI MILA — port 4000 te API chalao te `npm run seed` kar lo.
-      </main>
-    );
+    return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao te `npm run seed` kar lo.</Unavailable>;
   }
 
   const { settings, trending, hero, top10, latest, moods, picks, hubs, videos, titleHub, sessions, calendar, quiz, poll } = data;
@@ -98,7 +97,10 @@ export default function Home({ data }) {
               <Phulkari up style={{ position: 'absolute', left: 0, bottom: 0 }} />
             </div>
           </section>
-        ) : null}
+        ) : (
+          /* Hero nahi → vi page da ik h1 (heading order h1 → h2 bachda) */
+          <h1 className="sr-only">{settings.site_title}</h1>
+        )}
 
         {/* TOP 10 */}
         <section className="section" id="top10">
