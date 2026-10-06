@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { fmtAgo } from '@/lib/format';
 import { useToast } from '@/lib/ui';
 
 const ROLES = ['admin', 'author', 'seo', 'marketing'];
@@ -29,20 +30,6 @@ function roleSummary(perms) {
 }
 
 const isActive = (u) => (u.is_active === undefined || u.is_active === null ? true : Boolean(Number(u.is_active)));
-
-const fmtAgo = (d) => {
-  if (!d) return 'Never';
-  const t = new Date(d);
-  if (Number.isNaN(t.getTime())) return '—';
-  const m = Math.round((Date.now() - t.getTime()) / 60000);
-  if (m < 1) return 'Just now';
-  if (m < 60) return `${m} min ago`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h} h ago`;
-  const days = Math.round(h / 24);
-  if (days < 30) return `${days} d ago`;
-  return t.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-};
 
 /* crypto.getRandomValues + rejection sampling (modulo bias nahi); har class ton ghatt to ghatt ik char */
 const PW_SETS = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%^&*-_=+?'];

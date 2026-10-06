@@ -20,6 +20,7 @@ export default function Document() {
           ))}
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         {/* Theme first-paint ton pehla — stored choice jitdi hai; default: home dark, article/login/studio light */}
         <script
           dangerouslySetInnerHTML={{

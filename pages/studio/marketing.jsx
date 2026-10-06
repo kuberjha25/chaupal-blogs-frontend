@@ -92,7 +92,7 @@ export default function Marketing() {
               <div className="utmout">{utm}</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button className="btn sm" type="button" onClick={copy}>Copy link</button>
-                <button className="btn sm ghost" type="button" onClick={saveCampaign}>Save as campaign</button>
+                <button className="btn sm btn-ghost" type="button" onClick={saveCampaign}>Save as campaign</button>
               </div>
             </div>
 
@@ -104,7 +104,7 @@ export default function Marketing() {
                     <div key={s.email} className="mrow"><span className="mt">{s.email}</span><span className="md">{new Date(s.created_at).toLocaleDateString('en-IN')}</span></div>
                   ))}
                 </div>
-                <button className="btn ghost sm" type="button" onClick={sendTest} style={{ alignSelf: 'flex-start' }}>Send test chitthi</button>
+                <button className="btn btn-ghost sm" type="button" onClick={sendTest} style={{ alignSelf: 'flex-start' }}>Send test chitthi</button>
                 <span className="notech">Real mailer (SES/Mailchimp) agla phase — hun demo response.</span>
               </div>
               <div className="card">

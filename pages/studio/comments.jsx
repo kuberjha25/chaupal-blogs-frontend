@@ -52,12 +52,14 @@ export default function Comments() {
         <div className="card">
           {rows.map((cm) => {
             const [cls, lbl] = ST[cm.status] || ST.pending;
+            /* author_name = reader da naam; reader_id → READER chip (purane anonymous comments te null) */
+            const name = cm.author_name || 'Reader';
             return (
               <div key={cm.id} className="crow">
-                <span className="avatar" aria-hidden="true">{cm.author_name.slice(0, 2).toUpperCase()}</span>
+                <span className="avatar" aria-hidden="true">{name.slice(0, 2).toUpperCase()}</span>
                 <span className="cbody">
                   <span className="cq">&ldquo;{cm.body}&rdquo;</span>
-                  <span className="cm"><b>{cm.author_name}</b> · on <i>{cm.post_title}</i> · {new Date(cm.created_at).toLocaleString('en-IN')}</span>
+                  <span className="cm"><b>{name}</b>{cm.reader_id ? <span className="chip sample" style={{ marginLeft: 6 }}>READER</span> : null} · on <i>{cm.post_title}</i> · {new Date(cm.created_at).toLocaleString('en-IN')}</span>
                 </span>
                 <span className="cacts">
                   <span className={`status ${cls}`}>{lbl}</span>

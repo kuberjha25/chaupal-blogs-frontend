@@ -1,0 +1,13 @@
+{
+  "name": "Chaupal Te Charcha",
+  "short_name": "Charcha",
+  "description": "Stories, trailers te charcha from Chaupal.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0E0E13",
+  "theme_color": "#0E0E13",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png", "purpose": "any" }
+  ]
+}

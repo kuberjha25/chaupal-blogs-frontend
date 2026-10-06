@@ -66,8 +66,14 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 13px; font-weight: 800; letter-spacing: 0.5px;
 }
 .btn:hover { filter: brightness(1.06); color: var(--on-acc); }
-.btn.ghost, .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--strong); }
-.btn.ghost:hover, .btn-ghost:hover { border-color: var(--acc); color: var(--ink); filter: none; }
+/* Outline button — apni class; ".ghost" background glyph di class hai (position:absolute), kade button te na lao */
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--strong); }
+.btn-ghost:hover { border-color: var(--acc); color: var(--ink); filter: none; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+/* Link wangu dikhan wala button (footer account links, "Forgot password?") */
+.linkbtn { background: none; border: 0; padding: 0; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkbtn:hover { color: var(--acc-text); }
+.linkbtn:disabled { opacity: 0.55; cursor: not-allowed; text-decoration: none; }
 .btn-lg { height: 50px; padding: 0 24px; font-size: 14px; }
 .btn.sm { height: 34px; padding: 0 13px; font-size: 12px; }
 .btn.danger { background: transparent; border: 1px solid var(--strong); color: var(--bj); }
@@ -580,6 +586,61 @@ body.menu-open { overflow: hidden; }
 .pwonce { border: 1px solid var(--acc); background: var(--gold-tint); border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
 .pwonce .ct { font-size: 11px; font-weight: 800; letter-spacing: 1.8px; color: var(--acc-text); }
 .pwcode { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); overflow-wrap: anywhere; user-select: all; }
+
+/* Studio > Readers / Notifications */
+.rsearch input { width: 100%; max-width: 420px; height: 44px; padding: 0 14px; border: 1px solid var(--strong); border-radius: 10px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; }
+.aud { font-size: 13px; color: var(--mut); }
+.aud b { font-family: 'Anton', 'Arial Narrow', sans-serif; font-weight: 400; font-size: 22px; color: var(--acc-text); margin-right: 4px; }
+.nresult { border: 1px solid var(--ok); background: var(--ok-tint); border-radius: 14px; padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.nresult .ct { font-size: 11px; font-weight: 800; letter-spacing: 1.8px; color: var(--ok); }
+.nconfirm { border: 1px solid var(--acc); background: var(--gold-tint); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.nconf-t { font-size: 14px; font-weight: 700; }
+.npreview { border: 1px solid var(--line); border-radius: 16px; background: var(--card2); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); max-width: 420px; }
+.npv-head { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--dim); min-width: 0; }
+.npv-head img { border-radius: 4px; flex: none; }
+.npv-head span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.npv-now { margin-left: auto; flex: none; }
+.npv-body { display: flex; gap: 12px; align-items: flex-start; }
+.npv-icon { border-radius: 10px; flex: none; }
+.npv-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; font-size: 13.5px; line-height: 1.4; }
+.npv-text b { overflow-wrap: anywhere; }
+.npv-text span { color: var(--mut); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------------- Reader: account modal, footer links, comments, notification bar ---------------- */
+.rmodal-backdrop { position: fixed; inset: 0; z-index: 90; background: rgba(6, 6, 10, 0.62); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.rmodal { position: relative; width: min(460px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; padding: clamp(22px, 4vw, 32px); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); }
+.rmodal:focus { outline: none; }
+.rmodal h2 { margin: 0; font-size: clamp(24px, 3vw, 30px); padding-right: 48px; }
+.rmodal-x { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; }
+.rtabs { display: flex; gap: 8px; }
+.rtabs .pill { padding: 8px 16px; }
+.rpanel { display: flex; flex-direction: column; gap: 14px; }
+.rpanel .note a { color: var(--acc-text); text-decoration: underline; }
+.rinfo { margin: 0; border: 1px solid var(--line); background: var(--card2); border-radius: 10px; padding: 10px 14px; font-size: 13px; line-height: 1.5; }
+.rrow { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 13px; font-weight: 700; }
+.pwrule { font-size: 12px; color: var(--dim); }
+.pwrule.ok { color: var(--ok); font-weight: 700; }
+.pwrule.bad { color: var(--hv); }
+.field input.codein { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 24px; letter-spacing: 10px; text-align: center; }
+.raccount { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.legal .linkbtn { color: var(--dim); }
+.legal .linkbtn:hover { color: var(--acc-text); }
+.clist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.citem { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.citem:first-child { padding-top: 0; }
+.citem .avatar { background: var(--band2); color: var(--ink); border: 1px solid var(--line); font-size: 14px; }
+.citem .cbody { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.citem .cm { font-size: 12px; color: var(--dim); }
+.citem .cm b { color: var(--ink); }
+.citem .cq { font-size: 14.5px; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-line; }
+.notifybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; background: var(--card); border-top: 1px solid var(--acc); box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.22); }
+.nbin { max-width: 1440px; margin: 0 auto; padding: 10px clamp(16px, 5.5vw, 80px); display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.nbtext { font-size: 14px; font-weight: 800; }
+.nbhint { font-size: 12.5px; color: var(--mut); flex: 1 1 260px; }
+.nberr { font-size: 12.5px; font-weight: 700; color: var(--bj); }
+.nbacts { display: flex; gap: 8px; margin-left: auto; }
+body.has-nbar { padding-bottom: 72px; }
+body.has-nbar .toast { bottom: 90px; }
 .cbar { display: block; width: 15px; height: 3px; border-radius: 2px; margin-top: 2px; }
 .tanchor { position: relative; }
 .tpop { position: absolute; left: 0; top: calc(100% + 6px); z-index: 25; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28); padding: 14px; display: none; flex-direction: column; gap: 10px; min-width: 230px; max-width: min(320px, 88vw); }
@@ -680,7 +741,7 @@ body.menu-open { overflow: hidden; }
   .fcols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .fcols .fblurb-col { grid-column: 1 / -1; }
   .srow .thumb { width: 96px; }
-  /* Users table → stacked cards on phones (no sideways scroll) */
+  /* Studio tables (Users, Readers, Notifications history) → stacked cards on phones (no sideways scroll) */
   .tbl.utbl { min-width: 0; }
   .utbl, .utbl tbody, .utbl tr, .utbl td { display: block; width: 100%; }
   .utbl thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
@@ -694,6 +755,11 @@ body.menu-open { overflow: hidden; }
   .utbl .pwtr { padding: 14px 16px; }
   .utbl .pwtr td { background: transparent; }
   .pwbtns .act { height: 36px; }
+  .utbl td .act { height: 36px; }
+  .nbacts { margin-left: 0; width: 100%; }
+  .nbacts .btn { flex: 1; }
+  body.has-nbar { padding-bottom: 132px; }
+  body.has-nbar .toast { bottom: 150px; }
 }
 @media (max-width: 620px) {
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }

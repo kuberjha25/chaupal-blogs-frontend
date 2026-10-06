@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Mark, Phulkari, SocialLinks } from './bits';
+import ReaderLinks from '@/components/reader/ReaderLinks';
 
 export default function Footer({ settings = {} }) {
   const f = settings.footer || {};
@@ -65,6 +66,7 @@ export default function Footer({ settings = {} }) {
                 <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
               );
             })}
+            <ReaderLinks />
             <a className="top-pill" href="#top">Back to top ↑</a>
           </span>
         </div>

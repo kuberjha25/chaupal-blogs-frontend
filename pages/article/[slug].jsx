@@ -1,8 +1,9 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ssrGet, api, absMediaUrl, isBackendDown, markUnavailable } from '@/lib/api';
+import { ssrGet, absMediaUrl, isBackendDown, markUnavailable } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
+import Comments from '@/components/reader/Comments';
 import Footer from '@/components/site/Footer';
 import Unavailable from '@/components/site/Unavailable';
 import { ArtGhost, SectionHead, SocialLinks } from '@/components/site/bits';
@@ -35,9 +36,6 @@ export async function getServerSideProps({ params, res }) {
 export default function Article({ data }) {
   const [active, setActive] = useState('');
   const [copied, setCopied] = useState(false);
-  const [cName, setCName] = useState('');
-  const [cBody, setCBody] = useState('');
-  const [cOk, setCOk] = useState(false);
 
   /* TOC scrollspy */
   useEffect(() => {
@@ -78,18 +76,6 @@ export default function Article({ data }) {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const submitComment = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post(`/api/public/posts/${post.slug}/comments`, { name: cName, body: cBody });
-      setCOk(true);
-      setCName('');
-      setCBody('');
-    } catch (err) {
-      /* ignore in demo */
-    }
   };
 
   return (
@@ -250,19 +236,8 @@ export default function Article({ data }) {
                 </span>
               </div>
 
-              {/* Comment form → moderation queue */}
-              <div className="scard">
-                <span className="shh">CHARCHA KARO — COMMENT CHHADO</span>
-                {cOk ? (
-                  <span className="nl-ok">Shukriya! Comment review ton baad live hovega.</span>
-                ) : (
-                  <form onSubmit={submitComment} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div className="field"><label htmlFor="cname">NAAM</label><input id="cname" value={cName} onChange={(e) => setCName(e.target.value)} required maxLength={80} /></div>
-                    <div className="field"><label htmlFor="cbody">COMMENT</label><textarea id="cbody" rows={3} value={cBody} onChange={(e) => setCBody(e.target.value)} required maxLength={2000} /></div>
-                    <button className="btn" type="submit" style={{ alignSelf: 'flex-start' }}>Post comment</button>
-                  </form>
-                )}
-              </div>
+              {/* Approved comments + reader-only form → moderation queue (dono client te load) */}
+              <Comments slug={post.slug} />
             </article>
           </div>
         </div>

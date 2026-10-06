@@ -26,7 +26,12 @@ const I = {
   set: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="2.6" stroke="currentColor" strokeWidth="1.7" /><path d="M10 2.8 V5 M10 15 V17.2 M2.8 10 H5 M15 10 H17.2 M4.9 4.9 L6.5 6.5 M13.5 13.5 L15.1 15.1 M15.1 4.9 L13.5 6.5 M6.5 13.5 L4.9 15.1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>,
   out: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 4 H5 V16 H12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /><path d="M9 10 H17 M14 6.5 L17.5 10 L14 13.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   site: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 4 H4 V16 H16 V12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /><path d="M11 3.5 H16.5 V9 M16.5 3.5 L9.5 10.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>,
+  readers: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 4.5 C5.5 3.5 8 3.8 10 5.5 C12 3.8 14.5 3.5 17 4.5 V15.5 C14.5 14.5 12 14.8 10 16.5 C8 14.8 5.5 14.5 3 15.5 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M10 5.5 V16.5" stroke="currentColor" strokeWidth="1.7" /></svg>,
+  bell: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 14 V9 A5 5 0 0 1 15 9 V14 L16.5 15.5 H3.5 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M8.3 17.5 A2 2 0 0 0 11.7 17.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>,
 };
+
+/* Readers te Notifications — role-based (admin + marketing), author/seo ton luke */
+export const READER_ROLES = ['admin', 'marketing'];
 
 const GROUPS = [
   {
@@ -45,6 +50,8 @@ const GROUPS = [
       { href: '/studio/seo', label: 'SEO', icon: I.seo, perm: 'seo' },
       { href: '/studio/marketing', label: 'Marketing', icon: I.mkt, perm: 'marketing' },
       { href: '/studio/comments', label: 'Comments', icon: I.cmt, perm: 'approve' },
+      { href: '/studio/readers', label: 'Readers', icon: I.readers, roles: READER_ROLES },
+      { href: '/studio/notifications', label: 'Notifications', icon: I.bell, roles: READER_ROLES },
     ],
   },
   {
@@ -109,7 +116,7 @@ export default function StudioLayout({ title, children }) {
               <nav className="ngroup" key={g.head} aria-label={g.head}>
                 <span className="nh">{g.head}</span>
                 {g.links.map((l) =>
-                  can(l.perm) ? (
+                  (l.roles ? l.roles.includes(user.role) : can(l.perm)) ? (
                     <Link key={l.href} className={`nlink${router.pathname === l.href ? ' active' : ''}`} href={l.href} onClick={() => setOpen(false)}>
                       {l.icon}
                       {l.label}

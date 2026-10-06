@@ -158,7 +158,7 @@ export default function EditorPage() {
               </Can>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <Can perm="edit-content">
-                  <button className="btn ghost" type="button" disabled={busy} onClick={() => save(can('publish') ? null : 'draft')}>Save {can('publish') ? '' : 'draft'}</button>
+                  <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => save(can('publish') ? null : 'draft')}>Save {can('publish') ? '' : 'draft'}</button>
                 </Can>
                 <Can perm="submit">
                   {!can('publish') ? (
