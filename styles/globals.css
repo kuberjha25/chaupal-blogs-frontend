@@ -392,7 +392,8 @@ body.menu-open { overflow: hidden; }
 .postbody hr { border: 0; border-top: 1px solid var(--strong); margin: 22px 0; }
 .postbody ul, .postbody ol { padding-left: 26px; }
 .postbody li { margin: 5px 0; }
-.postbody table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14.5px; }
+.postbody table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14.5px; display: block; max-width: 100%; overflow-x: auto; }
+.postbody iframe { max-width: 100%; }
 .postbody th, .postbody td { border: 1px solid var(--strong); padding: 9px 12px; text-align: left; vertical-align: top; }
 .postbody th { font-weight: 800; }
 .postbody table.t-striped tbody tr:nth-child(even) { background: var(--card2); }

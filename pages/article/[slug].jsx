@@ -125,8 +125,8 @@ export default function Article({ data }) {
 
       <Chrome settings={settings} trending={[]} />
 
-      <main id="top">
-        <div className="wrap">
+      <main id="main">
+        <div className="wrap" id="top">
           <div className="ahead">
             <nav className="crumbs" aria-label="Breadcrumb">
               <Link href="/">Charcha</Link>

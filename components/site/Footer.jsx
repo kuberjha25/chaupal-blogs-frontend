@@ -56,9 +56,15 @@ export default function Footer({ settings = {} }) {
         <div className="legal">
           <span>{f.copyright || ''}</span>
           <span className="llinks">
-            {legal.map((l) => (
-              <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
-            ))}
+            {legal.map((l) => {
+              /* Internal path (/privacy-policy) → same tab; external URL → new tab */
+              const internal = typeof l.url === 'string' && l.url.startsWith('/') && !l.url.startsWith('//');
+              return internal ? (
+                <Link key={l.label} href={l.url}>{l.label}</Link>
+              ) : (
+                <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
+              );
+            })}
             <a className="top-pill" href="#top">Back to top ↑</a>
           </span>
         </div>
