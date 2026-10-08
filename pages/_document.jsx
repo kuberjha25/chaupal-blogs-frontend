@@ -18,8 +18,8 @@ export default function Document() {
           .map((v) => (
             <meta key={v} name="google-site-verification" content={v} />
           ))}
-        <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
         {/* Theme first-paint ton pehla — stored choice jitdi hai; default: home dark, article/login/studio light */}
         <script

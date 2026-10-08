@@ -118,7 +118,7 @@ button { font-family: inherit; cursor: pointer; }
 .mainbar { background: var(--bg); border-bottom: 1px solid var(--line); }
 .mainbar .wrap { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .lockup { display: flex; align-items: center; gap: 12px; }
-.mark { width: 40px; height: 40px; border-radius: 10px; background: var(--acc); display: flex; align-items: center; justify-content: center; flex: none; }
+.mark { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; display: block; flex: none; }
 .wordmark { line-height: 1.1; }
 .wordmark .wm1 { font-size: 20px; letter-spacing: 1.5px; }
 .wordmark .wm1 span { color: var(--acc-text); }
@@ -163,6 +163,8 @@ body.menu-open { overflow: hidden; }
 .ghost { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -52%); line-height: 1; color: var(--ghost); opacity: 0.08; user-select: none; }
 .arttag { position: absolute; top: 12px; right: 14px; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: var(--tag); }
 .artimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.artbg { object-fit: cover; filter: blur(22px) brightness(0.65); transform: scale(1.15); }
+.artfull { object-fit: contain; }
 .phulkari { display: block; width: 100%; height: 8px; }
 
 /* ---------------- Hero ---------------- */
@@ -534,13 +536,13 @@ body.menu-open { overflow: hidden; }
 .edcol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .artslot { position: relative; overflow: hidden; border: 1px dashed var(--strong); border-radius: 12px; aspect-ratio: 16 / 7; display: flex; align-items: flex-end; padding: 12px; gap: 8px; }
 .artslot .ghost { font-size: 110px; }
-.artslot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.artslot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .artslot .btn { position: relative; }
 .lockednote { border: 1px dashed var(--strong); border-radius: 12px; background: var(--card2); padding: 14px; font-size: 12.5px; color: var(--dim); line-height: 1.55; }
 .mediagrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .mtile { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
 .mtile .mart { position: relative; aspect-ratio: 4 / 3; display: block; background: var(--band2); }
-.mtile .mart img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mtile .mart img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .mtile .mi { padding: 10px 12px; font-size: 11.5px; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; color: var(--mut); }
 .playgrid, .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 .stackcol { display: flex; flex-direction: column; gap: 16px; }
@@ -725,8 +727,11 @@ body.has-nbar .toast { bottom: 90px; }
 @media (max-width: 720px) {
   .ulabel, .udivider { display: none; }
   .mainbar .wrap { height: 60px; }
-  .hero-panel { position: static; width: auto; margin: -60px clamp(16px, 4vw, 20px) 24px; backdrop-filter: none; }
-  .hero-art { min-height: 300px; }
+  .hero-panel { position: static; width: auto; margin: 16px clamp(16px, 4vw, 20px) 24px; backdrop-filter: none; }
+  .hero-art { min-height: 0; aspect-ratio: 16 / 9; }
+  .heroimg { min-height: 0; aspect-ratio: 16 / 9; }
+  .feature .art { min-height: 0; aspect-ratio: 16 / 9; }
+  .latest-row .art, .rart { aspect-ratio: 16 / 9; }
   .hero-ctas .btn { width: 100%; }
   .section { padding-block: 40px 44px; }
   .swipe-hint { display: block; }
@@ -762,6 +767,13 @@ body.has-nbar .toast { bottom: 90px; }
   body.has-nbar .toast { bottom: 150px; }
 }
 @media (max-width: 620px) {
+  .utility .wrap { height: auto; min-height: 40px; flex-wrap: wrap; padding-block: 6px; }
+  .ulinks { gap: 12px; font-size: 10px; letter-spacing: 0.6px; white-space: nowrap; }
+  .mainbar .wrap { gap: 10px; }
+  .lockup { min-width: 0; flex: 1; justify-content: center; gap: 8px; }
+  .wordmark { min-width: 0; }
+  .wordmark .wm1 { font-size: 15px; letter-spacing: 1px; white-space: nowrap; }
+  .wordmark .wm2 { display: none; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mediagrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .crow { flex-wrap: wrap; }
