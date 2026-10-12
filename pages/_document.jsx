@@ -21,6 +21,7 @@ export default function Document() {
         <link rel="icon" href="/logo.png" />
         <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="alternate" type="application/rss+xml" title="Chaupal Te Charcha » Feed" href="/feed" />
         {/* Theme before first paint — the stored choice wins; default: home dark, article/login/studio light */}
         <script
           dangerouslySetInnerHTML={{

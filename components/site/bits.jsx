@@ -5,11 +5,21 @@ export function Mark({ size = 40 }) {
 }
 
 /* Poster/still block — the image if there is one, otherwise a DB-driven ghost glyph placeholder */
-export function ArtGhost({ className = '', tone = 1, glyph = 'ਚ', script = 'gurmukhi', image, alt = '', ghostStyle, tag, children }) {
+export function ArtGhost({ className = '', tone = 1, glyph = 'ਚ', script = 'gurmukhi', image, alt = '', width, height, eager, ghostStyle, tag, children }) {
   return (
     <span className={`art tone-${tone} ${className}${image ? ' has-img' : ''}`}>
       {image ? (
-        <img className="artimg" src={mediaUrl(image)} alt={alt} loading="lazy" />
+        /* width/height (when the API sends them) reserve the space so the page doesn't jump as the image loads;
+           eager = the page's main image, loaded first (lowercase fetchpriority: React 18 passes it through as is) */
+        <img
+          className="artimg"
+          src={mediaUrl(image)}
+          alt={alt}
+          width={Number(width) || undefined}
+          height={Number(height) || undefined}
+          loading={eager ? 'eager' : 'lazy'}
+          {...(eager ? { fetchpriority: 'high' } : {})}
+        />
       ) : (
         <span className={`ghost glyph-${script}`} aria-hidden="true" style={ghostStyle}>{glyph}</span>
       )}

@@ -63,6 +63,9 @@ export default function Article({ data }) {
   const { post, toc, related, latest, settings } = data;
   const url = `${SITE}/article/${post.slug}`;
   const title = post.seo_title || post.title;
+  /* A custom SEO title goes out exactly as written (as the old WordPress/Yoast titles did); otherwise "Title — Site" */
+  const pageTitle = post.seo_title || `${post.title} — ${settings.site_title}`;
+  const fbPage = (settings.socials || []).find((s) => s.key === 'facebook');
   const desc = post.seo_description || post.dek;
   const authorName = post.author_name || post.author;
   const published = iso(post.published_at) || iso(post.updated_at);
@@ -85,7 +88,7 @@ export default function Article({ data }) {
   return (
     <>
       <Head>
-        <title>{`${title} — ${settings.site_title}`}</title>
+        <title>{pageTitle}</title>
         <meta name="description" content={desc} />
         <link rel="canonical" href={url} />
         <meta property="og:type" content="article" />
@@ -97,6 +100,8 @@ export default function Article({ data }) {
         {img && imgW ? <meta property="og:image:width" content={String(imgW)} /> : null}
         {img && imgH ? <meta property="og:image:height" content={String(imgH)} /> : null}
         {img ? <meta property="og:image:alt" content={imgAlt} /> : null}
+        {authorName ? <meta name="author" content={authorName} /> : null}
+        {fbPage ? <meta property="article:publisher" content={fbPage.url} /> : null}
         {published ? <meta property="article:published_time" content={published} /> : null}
         {modified ? <meta property="article:modified_time" content={modified} /> : null}
         <meta name="twitter:card" content="summary_large_image" />
@@ -211,7 +216,7 @@ export default function Article({ data }) {
 
             <article className="content">
               <figure className="figure">
-                <ArtGhost className="heroimg" tone={post.art_tone} glyph={post.ghost_glyph} script={post.glyph_script} image={post.image} alt={post.image_alt || post.title} tag="HERO STILL · 16:9" />
+                <ArtGhost className="heroimg" tone={post.art_tone} glyph={post.ghost_glyph} script={post.glyph_script} image={post.image} width={post.image_width} height={post.image_height} eager alt={post.image_alt || post.title} tag="HERO STILL · 16:9" />
                 <figcaption className="cap">{post.image_alt || `A still from ${post.title.split(':')[0]}. Courtesy: Chaupal`}</figcaption>
               </figure>
 
@@ -252,7 +257,7 @@ export default function Article({ data }) {
             <div className="related">
               {related.map((p) => (
                 <Link key={p.id} className="ocard" href={`/article/${p.slug}`}>
-                  <ArtGhost className="rart" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} alt={p.image_alt || p.title} />
+                  <ArtGhost className="rart" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} width={p.image_width} height={p.image_height} alt={p.image_alt || p.title} />
                   <span className={`sk ${boliClass(p.boli)}`}>{(p.boli || '').toUpperCase()}</span>
                   <span className="ot" style={{ fontSize: 16, fontWeight: 700 }}>{p.title}</span>
                 </Link>

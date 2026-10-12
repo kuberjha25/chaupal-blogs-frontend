@@ -84,7 +84,7 @@ export default function Latest({ data }) {
               <div className="archive-grid">
                 {posts.map((p) => (
                   <Link key={p.id || p.slug} className="ocard" href={`/article/${p.slug}`}>
-                    <ArtGhost className="rart" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} alt={p.image_alt || p.title} />
+                    <ArtGhost className="rart" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} width={p.image_width} height={p.image_height} alt={p.image_alt || p.title} />
                     <span className="otext">
                       <span className={`sk ${boliClass(p.boli)}`}>{(p.category || p.boli || '').toUpperCase()}</span>
                       <span className="ot">{p.title}</span>

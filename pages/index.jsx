@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ssrGet, markUnavailable, withNav } from '@/lib/api';
+import { ssrGet, markUnavailable, withNav, absMediaUrl } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Unavailable from '@/components/site/Unavailable';
 import Footer from '@/components/site/Footer';
@@ -42,6 +42,8 @@ export default function Home({ data }) {
   const shownPicks = mood ? picks.filter((p) => p.mood === mood) : picks;
   const title = settings.seo_home_title || `${settings.site_title} — ${settings.tagline}`;
   const desc = settings.seo_home_description || settings.tagline;
+  /* Share preview (WhatsApp / Facebook / X): the featured story's image, otherwise the logo */
+  const shareImg = hero && hero.image ? absMediaUrl(hero.image) : `${SITE}/logo.png`;
 
   return (
     <>
@@ -54,7 +56,7 @@ export default function Home({ data }) {
         <meta property="og:description" content={desc} />
         <meta property="og:url" content={`${SITE}/`} />
         <meta property="og:site_name" content={settings.site_title} />
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="og:image" content={shareImg} />        <meta name="twitter:card" content="summary_large_image" />
         {settings.twitter_handle ? <meta name="twitter:site" content={settings.twitter_handle} /> : null}
         <script
           type="application/ld+json"
@@ -78,7 +80,7 @@ export default function Home({ data }) {
           <section className="hero tone-1" id="top" aria-label="Featured story">
             <div className="hero-shell">
               <Link className="hero-link" href={`/article/${hero.slug}`} aria-label={hero.title}>
-                <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
+                <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} width={hero.image_width} height={hero.image_height} eager alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
               </Link>
               {hero.image ? (
                 /* No panel when there is an image (it used to cover the image) → h1 for screen readers only */
@@ -139,7 +141,7 @@ export default function Home({ data }) {
             <div className="latest-grid">
               {latest.feature ? (
                 <Link className="ocard feature" href={`/article/${latest.feature.slug}`}>
-                  <ArtGhost tone={latest.feature.art_tone} glyph={latest.feature.ghost_glyph} script={latest.feature.glyph_script} image={latest.feature.image} alt={latest.feature.image_alt || latest.feature.title} tag="STILL 16:9" />
+                  <ArtGhost tone={latest.feature.art_tone} glyph={latest.feature.ghost_glyph} script={latest.feature.glyph_script} image={latest.feature.image} width={latest.feature.image_width} height={latest.feature.image_height} alt={latest.feature.image_alt || latest.feature.title} tag="STILL 16:9" />
                   <span className="otext">
                     <span><span className="chip fill" style={{ fontSize: 10 }}>{(latest.feature.category || '').toUpperCase()}</span></span>
                     <span className="ot">{latest.feature.title}</span>
@@ -150,7 +152,7 @@ export default function Home({ data }) {
               <div className="sidelist">
                 {latest.side.map((p) => (
                   <Link key={p.id} className="srow" href={`/article/${p.slug}`}>
-                    <ArtGhost className="thumb" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} alt={p.image_alt || p.title} />
+                    <ArtGhost className="thumb" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} width={p.image_width} height={p.image_height} alt={p.image_alt || p.title} />
                     <span className="st">
                       <span className={`sk ${boliClass(p.boli)}`}>{(p.boli || p.category || '').toUpperCase()}</span>
                       <span className="sh">{p.title}</span>
@@ -162,7 +164,7 @@ export default function Home({ data }) {
             <div className="latest-row">
               {latest.row[0] ? (
                 <Link className="ocard" href={`/article/${latest.row[0].slug}`}>
-                  <ArtGhost tone={latest.row[0].art_tone} glyph={latest.row[0].ghost_glyph} script={latest.row[0].glyph_script} image={latest.row[0].image} alt={latest.row[0].title} />
+                  <ArtGhost tone={latest.row[0].art_tone} glyph={latest.row[0].ghost_glyph} script={latest.row[0].glyph_script} image={latest.row[0].image} width={latest.row[0].image_width} height={latest.row[0].image_height} alt={latest.row[0].title} />
                   <span className="otext">
                     <span className="sk c-acc">{(latest.row[0].category || '').toUpperCase()}</span>
                     <span className="ot">{latest.row[0].title}</span>
@@ -180,7 +182,7 @@ export default function Home({ data }) {
               ) : null}
               {latest.row[1] ? (
                 <Link className="ocard" href={`/article/${latest.row[1].slug}`}>
-                  <ArtGhost tone={latest.row[1].art_tone} glyph={latest.row[1].ghost_glyph} script={latest.row[1].glyph_script} image={latest.row[1].image} alt={latest.row[1].title} />
+                  <ArtGhost tone={latest.row[1].art_tone} glyph={latest.row[1].ghost_glyph} script={latest.row[1].glyph_script} image={latest.row[1].image} width={latest.row[1].image_width} height={latest.row[1].image_height} alt={latest.row[1].title} />
                   <span className="otext">
                     <span className="sk c-acc">{(latest.row[1].category || '').toUpperCase()}</span>
                     <span className="ot">{latest.row[1].title}</span>
