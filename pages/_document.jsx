@@ -18,8 +18,8 @@ export default function Document() {
           .map((v) => (
             <meta key={v} name="google-site-verification" content={v} />
           ))}
-        <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
         {/* Theme before first paint — the stored choice wins; default: home dark, article/login/studio light */}
         <script

@@ -9,8 +9,8 @@ import Unavailable from '@/components/site/Unavailable';
 import { ArtGhost, SectionHead, SocialLinks } from '@/components/site/bits';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-/* Publisher logo — public/favicon.png (64×64 PNG), the site's only logo asset */
-const LOGO = { url: `${SITE}/favicon.png`, width: 64, height: 64 };
+/* Publisher logo — public/logo.png (225×225 PNG), the site's only logo asset */
+const LOGO = { url: `${SITE}/logo.png`, width: 225, height: 225 };
 const boliClass = (b) => (b === 'Haryanvi' ? 'c-hv' : b === 'Bhojpuri' ? 'c-bj' : 'c-acc');
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 /* ISO 8601 for meta / JSON-LD; invalid or empty → undefined (the tag is not rendered at all) */

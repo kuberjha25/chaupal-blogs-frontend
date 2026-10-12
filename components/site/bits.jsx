@@ -1,15 +1,7 @@
 import { mediaUrl } from '@/lib/api';
 
-export function Mark({ size = 40, icon = 24 }) {
-  return (
-    <span className="mark" style={{ width: size, height: size }} aria-hidden="true">
-      <svg width={icon} height={icon} viewBox="0 0 32 32" fill="none">
-        <path d="M5 17 L16 6 L27 17" stroke="#171204" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M4 25 H28" stroke="#171204" strokeWidth="3" strokeLinecap="round" />
-        <circle cx="16" cy="21" r="2.6" fill="#171204" />
-      </svg>
-    </span>
-  );
+export function Mark({ size = 40 }) {
+  return <img className="mark" src="/logo.png" alt="" width={size} height={size} style={{ width: size, height: size }} aria-hidden="true" />;
 }
 
 /* Poster/still block — the image if there is one, otherwise a DB-driven ghost glyph placeholder */

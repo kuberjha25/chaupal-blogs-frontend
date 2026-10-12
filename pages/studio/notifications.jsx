@@ -168,12 +168,12 @@ export default function Notifications() {
           <span className="ct">PREVIEW</span>
           <div className="npreview" aria-label="Notification preview">
             <div className="npv-head">
-              <img src="/favicon.png" width="16" height="16" alt="" />
+              <img src="/logo.png" width="16" height="16" alt="" />
               <span>Chaupal Te Charcha · {host}</span>
               <span className="npv-now">now</span>
             </div>
             <div className="npv-body">
-              <img className="npv-icon" src="/favicon.png" width="40" height="40" alt="" />
+              <img className="npv-icon" src="/logo.png" width="40" height="40" alt="" />
               <div className="npv-text">
                 <b>{title || 'Notification title'}</b>
                 <span>{body || 'Your message shows here — keep it short and clear.'}</span>

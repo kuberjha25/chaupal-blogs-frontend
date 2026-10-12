@@ -118,7 +118,7 @@ button { font-family: inherit; cursor: pointer; }
 .mainbar { background: var(--bg); border-bottom: 1px solid var(--line); }
 .mainbar .wrap { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .lockup { display: flex; align-items: center; gap: 12px; }
-.mark { width: 40px; height: 40px; border-radius: 10px; background: var(--acc); display: flex; align-items: center; justify-content: center; flex: none; }
+.mark { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; display: block; flex: none; }
 .wordmark { line-height: 1.1; }
 .wordmark .wm1 { font-size: 20px; letter-spacing: 1.5px; }
 .wordmark .wm1 span { color: var(--acc-text); }
@@ -539,7 +539,7 @@ span.art.has-img .artimg { position: static; display: block; width: 100%; height
 .edcol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .artslot { position: relative; overflow: hidden; border: 1px dashed var(--strong); border-radius: 12px; aspect-ratio: 16 / 7; display: flex; align-items: flex-end; padding: 12px; gap: 8px; }
 .artslot .ghost { font-size: 110px; }
-.artslot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.artslot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .artslot .btn { position: relative; }
 /* Image uploaded → the slot also takes the image's own shape (like the site), button sits over the image */
 .artslot.has-img { aspect-ratio: auto; display: block; padding: 0; }
@@ -741,8 +741,11 @@ body.has-nbar .toast { bottom: 90px; }
 @media (max-width: 720px) {
   .ulabel, .udivider { display: none; }
   .mainbar .wrap { height: 60px; }
-  .hero-panel { position: static; width: auto; margin: -60px clamp(16px, 4vw, 20px) 24px; backdrop-filter: none; }
-  .hero-art { min-height: 300px; }
+  .hero-panel { position: static; width: auto; margin: 16px clamp(16px, 4vw, 20px) 24px; backdrop-filter: none; }
+  .hero-art { min-height: 0; aspect-ratio: 16 / 9; }
+  .heroimg { min-height: 0; aspect-ratio: 16 / 9; }
+  .feature .art { min-height: 0; aspect-ratio: 16 / 9; }
+  .latest-row .art, .rart { aspect-ratio: 16 / 9; }
   .hero-ctas .btn { width: 100%; }
   .section { padding-block: 40px 44px; }
   .swipe-hint { display: block; }
@@ -778,6 +781,13 @@ body.has-nbar .toast { bottom: 90px; }
   body.has-nbar .toast { bottom: 150px; }
 }
 @media (max-width: 620px) {
+  .utility .wrap { height: auto; min-height: 40px; flex-wrap: wrap; padding-block: 6px; }
+  .ulinks { gap: 12px; font-size: 10px; letter-spacing: 0.6px; white-space: nowrap; }
+  .mainbar .wrap { gap: 10px; }
+  .lockup { min-width: 0; flex: 1; justify-content: center; gap: 8px; }
+  .wordmark { min-width: 0; }
+  .wordmark .wm1 { font-size: 15px; letter-spacing: 1px; white-space: nowrap; }
+  .wordmark .wm2 { display: none; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mediagrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .crow { flex-wrap: wrap; }
