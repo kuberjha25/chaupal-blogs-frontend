@@ -6,10 +6,10 @@ import { useAuth } from '@/lib/auth';
 import { Mark, Phulkari } from '@/components/site/bits';
 import { ThemeToggle } from '@/lib/ui';
 
-/* Seeded demo accounts — sirf dev vich. `process.env.NODE_ENV !== 'production'` literal hi rakho
-   (variable vich na pao) taan ke build time te branch fold ho ke production bundle ton strings hat jaan. */
+/* Seeded demo accounts — dev only. Keep `process.env.NODE_ENV !== 'production'` as a literal
+   (don't put it in a variable) so the branch folds at build time and the strings drop out of the production bundle. */
 const DEMOS = process.env.NODE_ENV !== 'production' ? [
-  { email: 'admin@chaupal.com', name: 'Ujjwal M.', role: 'ADMIN · FULL ACCESS', ini: 'UM', bg: 'var(--acc)', fg: 'var(--on-acc)', color: 'var(--acc-text)' },
+  { email: 'admin@chaupal.com', name: 'Kuber Jha', role: 'ADMIN · FULL ACCESS', ini: 'UM', bg: 'var(--acc)', fg: 'var(--on-acc)', color: 'var(--acc-text)' },
   { email: 'desk@chaupal.com', name: 'Charcha Desk', role: 'PUBLISHER · AUTHOR', ini: 'CD', bg: 'var(--ok)', fg: '#fff', color: 'var(--ok)' },
   { email: 'seo@chaupal.com', name: 'Simran K.', role: 'SEO MANAGER', ini: 'SK', bg: 'var(--hv)', fg: '#fff', color: 'var(--hv)' },
   { email: 'marketing@chaupal.com', name: 'Manav S.', role: 'MARKETING AGENT', ini: 'MS', bg: 'var(--bj)', fg: '#fff', color: 'var(--bj)' },

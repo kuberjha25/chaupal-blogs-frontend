@@ -1,6 +1,6 @@
 // Static page copied from the old WordPress site (terms-and-conditions). Edit the text in BODY below.
 import Head from 'next/head';
-import { ssrGet } from '@/lib/api';
+import { ssrGet, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
 
@@ -11,8 +11,8 @@ const BODY = "<p>Welcome to blog.chaupal.com!</p>\n\n<p>These terms and conditio
 
 export async function getServerSideProps() {
   try {
-    const { settings } = await ssrGet('/api/public/home');
-    return { props: { settings: settings || {} } };
+    const home = await ssrGet('/api/public/home');
+    return { props: { settings: withNav(home.settings, home) } };
   } catch (e) {
     return { props: { settings: {} } };
   }

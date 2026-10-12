@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import StudioLayout, { Can } from '@/components/studio/StudioLayout';
+import ImageCheck, { IMAGE_SPECS, checkImage } from '@/components/studio/ImageCheck';
 import { api, mediaUrl } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/lib/ui';
@@ -23,6 +24,7 @@ export default function EditorPage() {
   const [tax, setTax] = useState({ bolis: [], categories: [] });
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [imgCheck, setImgCheck] = useState(null);
   const id = router.query.id;
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function EditorPage() {
   const set = (k) => (e) => setP((s) => ({ ...s, [k]: e.target ? e.target.value : e }));
 
   const uploadFeatured = async (file) => {
+    /* Before the upload — show expected vs actual size immediately */
+    setImgCheck(await checkImage(file, IMAGE_SPECS.featured));
     const fd = new FormData();
     fd.append('file', file);
     fd.append('alt', p.title || file.name);
@@ -118,7 +122,7 @@ export default function EditorPage() {
             </div>
             <div className="card" style={{ padding: 14 }}>
               <span className="ct">FEATURED IMAGE · AUTO-WEBP</span>
-              <div className={`artslot tone-${p.art_tone || 1}`}>
+              <div className={`artslot tone-${p.art_tone || 1}${p.featured_path ? ' has-img' : ''}`}>
                 {p.featured_path ? <img src={mediaUrl(p.featured_path)} alt="" /> : <span className={`ghost glyph-${p.glyph_script}`} aria-hidden="true">{p.ghost_glyph}</span>}
                 {!metaOnly ? (
                   <label className="btn sm" style={{ cursor: 'pointer' }}>
@@ -127,6 +131,7 @@ export default function EditorPage() {
                   </label>
                 ) : null}
               </div>
+              {!metaOnly ? <ImageCheck spec={IMAGE_SPECS.featured} result={imgCheck} /> : null}
               <span className="notech">Koi vi format upload karo — server WebP bana ke save karda (production S3 swap-ready).</span>
             </div>
             {metaOnly ? (

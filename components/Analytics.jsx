@@ -6,9 +6,9 @@ const GTM = process.env.NEXT_PUBLIC_GTM_ID;
 const GA4 = process.env.NEXT_PUBLIC_GA4_ID;
 const PIXEL = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
-/* ID env vich daalte hi live — khali hai to koi script load nahi hoti.
-   Recommended: sirf GTM ID daalo te GA4 + Pixel GTM de andar manage karo,
-   ya direct GA4/PIXEL IDs daalo — dono supported. */
+/* Goes live as soon as the ID is set in env — if empty, no script is loaded.
+   Recommended: set only the GTM ID and manage GA4 + Pixel inside GTM,
+   or set the GA4/PIXEL IDs directly — both are supported. */
 export default function Analytics() {
   const router = useRouter();
 

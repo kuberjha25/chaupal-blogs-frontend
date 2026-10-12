@@ -12,10 +12,10 @@ export function Mark({ size = 40, icon = 24 }) {
   );
 }
 
-/* Poster/still block — image hai to image, nahi to DB-driven ghost glyph placeholder */
+/* Poster/still block — the image if there is one, otherwise a DB-driven ghost glyph placeholder */
 export function ArtGhost({ className = '', tone = 1, glyph = 'ਚ', script = 'gurmukhi', image, alt = '', ghostStyle, tag, children }) {
   return (
-    <span className={`art tone-${tone} ${className}`}>
+    <span className={`art tone-${tone} ${className}${image ? ' has-img' : ''}`}>
       {image ? (
         <img className="artimg" src={mediaUrl(image)} alt={alt} loading="lazy" />
       ) : (

@@ -1,7 +1,7 @@
-/* Archive — saare live posts, newest first, 12 per page (?page=N) */
+/* Archive — all live posts, newest first, 12 per page (?page=N) */
 import Head from 'next/head';
 import Link from 'next/link';
-import { ssrGet, isBackendDown, markUnavailable } from '@/lib/api';
+import { ssrGet, isBackendDown, markUnavailable, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
 import Unavailable from '@/components/site/Unavailable';
@@ -19,7 +19,7 @@ export async function getServerSideProps({ query, res }) {
   if (raw !== undefined) {
     if (typeof raw !== 'string' || !/^\d+$/.test(raw) || Number(raw) < 1) return { notFound: true };
     page = Number(raw);
-    /* ?page=1 da duplicate URL na bane */
+    /* Avoid a duplicate URL for ?page=1 */
     if (page === 1) return { redirect: { destination: '/latest', statusCode: 301 } };
   }
 
@@ -39,7 +39,7 @@ export async function getServerSideProps({ query, res }) {
   const { posts = [], pages = 1, total = 0 } = list.value || {};
   if (page > 1 && page > pages) return { notFound: true };
 
-  const settings = (home.status === 'fulfilled' && home.value && home.value.settings) || {};
+  const settings = home.status === 'fulfilled' && home.value ? withNav(home.value.settings, home.value) : {};
   return { props: { data: { settings, posts, page, pages: Math.max(1, pages), total } } };
 }
 

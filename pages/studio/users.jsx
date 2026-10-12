@@ -21,7 +21,7 @@ const MATRIX_ROWS = [
 ];
 const PERM_LABEL = Object.fromEntries(MATRIX_ROWS);
 
-/* Backend di permission list ton ik line — role ki kar sakda */
+/* One line from the backend's permission list — what the role can do */
 function roleSummary(perms) {
   if (!Array.isArray(perms)) return '';
   if (!perms.length) return 'No access to anything yet.';
@@ -31,7 +31,7 @@ function roleSummary(perms) {
 
 const isActive = (u) => (u.is_active === undefined || u.is_active === null ? true : Boolean(Number(u.is_active)));
 
-/* crypto.getRandomValues + rejection sampling (modulo bias nahi); har class ton ghatt to ghatt ik char */
+/* crypto.getRandomValues + rejection sampling (no modulo bias); at least one char from every class */
 const PW_SETS = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%^&*-_=+?'];
 function randInt(n) {
   const limit = Math.floor(0x100000000 / n) * n;
@@ -55,7 +55,7 @@ async function copyText(text) {
     await navigator.clipboard.writeText(text);
     return true;
   } catch (e) {
-    /* http / purana browser — textarea fallback */
+    /* http / old browser — textarea fallback */
     try {
       const ta = document.createElement('textarea');
       ta.value = text;
@@ -115,7 +115,7 @@ function PasswordField({ id, label, value, onChange }) {
   );
 }
 
-/* Naya password sirf ik vaar dikhda — "Done" te state ton saaf */
+/* The new password is shown only once — cleared from state on "Done" */
 function OneTimePassword({ who, password, onDone }) {
   const [copied, copy] = useCopy();
   const ref = useRef(null);

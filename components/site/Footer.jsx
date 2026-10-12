@@ -7,6 +7,9 @@ export default function Footer({ settings = {} }) {
   const eco = settings.ecosystem || [];
   const legal = f.legal || [];
   const watchUrl = settings.watch_url || 'https://www.chaupal.com';
+  /* No link for a home section that is empty */
+  const hide = settings.empty_sections || [];
+  const has = (id) => !hide.includes(id);
 
   return (
     <footer className="footer">
@@ -27,18 +30,24 @@ export default function Footer({ settings = {} }) {
           <div className="fcol">
             <span className="fh">CHARCHA</span>
             <Link href="/#latest">Latest stories</Link>
-            <Link href="/#top10">Top 10</Link>
-            <Link href="/#watch">What to Watch</Link>
-            <Link href="/#trailers">Trailers</Link>
-            <Link href="/#play">Quizzes te polls</Link>
+            {has('top10') ? <Link href="/#top10">Top 10</Link> : null}
+            {has('watch') ? <Link href="/#watch">What to Watch</Link> : null}
+            {has('trailers') ? <Link href="/#trailers">Trailers</Link> : null}
+            {has('play') ? <Link href="/#play">Quizzes te polls</Link> : null}
           </div>
-          <div className="fcol">
-            <span className="fh">BOLI HUBS</span>
-            <Link href="/#boli">Punjabi</Link>
-            <Link href="/#boli">Haryanvi</Link>
-            <Link href="/#boli">Bhojpuri</Link>
-            <Link href="/#sessions">Charcha Sessions</Link>
-          </div>
+          {has('boli') || has('sessions') ? (
+            <div className="fcol">
+              <span className="fh">BOLI HUBS</span>
+              {has('boli') ? (
+                <>
+                  <Link href="/#boli">Punjabi</Link>
+                  <Link href="/#boli">Haryanvi</Link>
+                  <Link href="/#boli">Bhojpuri</Link>
+                </>
+              ) : null}
+              {has('sessions') ? <Link href="/#sessions">Charcha Sessions</Link> : null}
+            </div>
+          ) : null}
           <div className="fcol">
             <span className="fh">CHAUPAL</span>
             <a href={watchUrl} target="_blank" rel="noopener noreferrer">Watch on Chaupal</a>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import StudioLayout, { Can } from '@/components/studio/StudioLayout';
+import ImageCheck, { IMAGE_SPECS, checkImage } from '@/components/studio/ImageCheck';
 import { api, mediaUrl } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/lib/ui';
@@ -9,6 +10,7 @@ export default function Media() {
   const toast = useToast();
   const [rows, setRows] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [check, setCheck] = useState(null);
 
   const load = () => api.get('/api/admin/media').then((d) => setRows(d.media)).catch((e) => toast(e.message));
   useEffect(() => {
@@ -17,6 +19,8 @@ export default function Media() {
 
   const upload = async (file) => {
     setBusy(true);
+    /* Before the upload — show expected vs actual size immediately */
+    setCheck(await checkImage(file, IMAGE_SPECS.featured));
     const fd = new FormData();
     fd.append('file', file);
     fd.append('alt', file.name.replace(/\.[^.]+$/, ''));
@@ -54,6 +58,7 @@ export default function Media() {
           <input type="file" accept="image/*" hidden disabled={busy} onChange={(e) => e.target.files[0] && upload(e.target.files[0])} />
         </label>
       </div>
+      <ImageCheck spec={IMAGE_SPECS.featured} result={check} />
 
       {!rows ? (
         <div className="loading">MEDIA AA RAHI…</div>

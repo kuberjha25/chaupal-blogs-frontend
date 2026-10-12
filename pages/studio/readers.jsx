@@ -11,7 +11,7 @@ const NOTIF = {
   denied: ['st-spam', 'DENIED'],
 };
 const notifBadge = (s) => NOTIF[s] || ['st-draft', 'NOT ASKED'];
-/* verified / is_active: boolean ya MySQL 0/1 — dono chalde */
+/* verified / is_active: boolean or MySQL 0/1 — both work */
 const truthy = (v) => v === true || v === 1 || v === '1';
 const isVerified = (r) => truthy(r.verified);
 const isActive = (r) => truthy(r.is_active);
@@ -29,7 +29,7 @@ export default function Readers() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 
-  /* Search debounce — typing rukan ton 300ms baad, page 1 ton */
+  /* Search debounce — 300ms after typing stops, starting from page 1 */
   useEffect(() => {
     const t = setTimeout(() => {
       setQuery(q.trim());

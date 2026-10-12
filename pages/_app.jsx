@@ -12,14 +12,14 @@ export default function App({ Component, pageProps }) {
     <AuthProvider>
       <ToastProvider>
         <ReaderProvider>
-          {/* Site-wide defaults — page apna <meta name="robots"> de ke override kar sakda (login/studio: noindex) */}
+          {/* Site-wide defaults — a page can override with its own <meta name="robots"> (login/studio: noindex) */}
           <Head>
             <meta name="robots" content="max-image-preview:large" />
             <meta property="og:locale" content="en_IN" key="og:locale" />
           </Head>
           <Analytics />
           <Component {...pageProps} />
-          {/* Dono client-only — SSR HTML vich kuchh nahi render karde */}
+          {/* Both client-only — they render nothing into the SSR HTML */}
           <AuthModal />
           <NotifyBar />
         </ReaderProvider>

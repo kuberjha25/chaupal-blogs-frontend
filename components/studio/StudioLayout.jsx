@@ -30,7 +30,7 @@ const I = {
   bell: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 14 V9 A5 5 0 0 1 15 9 V14 L16.5 15.5 H3.5 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M8.3 17.5 A2 2 0 0 0 11.7 17.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>,
 };
 
-/* Readers te Notifications — role-based (admin + marketing), author/seo ton luke */
+/* Readers and Notifications — role-based (admin + marketing), hidden from author/seo */
 export const READER_ROLES = ['admin', 'marketing'];
 
 const GROUPS = [
@@ -78,7 +78,7 @@ export default function StudioLayout({ title, children }) {
     if (ready && !user) router.replace('/login');
   }, [ready, user, router]);
 
-  /* Head har branch vich — SSR HTML (auth ton pehla) vich vi noindex hona chahida */
+  /* Head in every branch — the SSR HTML (before auth) must also carry noindex */
   const head = (
     <Head>
       <title>{`${title} — Charcha Studio`}</title>

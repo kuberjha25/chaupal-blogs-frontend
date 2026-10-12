@@ -1,4 +1,4 @@
-/* Reader login / sign up / forgot / delete — ik accessible modal (focus trap, Esc, focus wapas opener te) */
+/* Reader login / sign up / forgot / delete — one accessible modal (focus trap, Esc, focus returns to the opener) */
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -85,7 +85,7 @@ function Dialog({ initialView, onClose }) {
   const [resendAt, setResendAt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
 
-  /* Focus trap + Esc + body scroll lock; band hon te focus opener te wapas */
+  /* Focus trap + Esc + body scroll lock; on close, focus returns to the opener */
   useEffect(() => {
     const opener = document.activeElement;
     const node = ref.current;
@@ -120,7 +120,7 @@ function Dialog({ initialView, onClose }) {
     };
   }, []);
 
-  /* Har step te pehla field focus */
+  /* Focus the first field on every step */
   useEffect(() => {
     const node = ref.current;
     const target = node.querySelector('[data-autofocus]') || node.querySelector('input') || node;
@@ -147,7 +147,7 @@ function Dialog({ initialView, onClose }) {
     try {
       await fn();
     } catch (e) {
-      /* Server da generic message jiwen da tiwen */
+      /* Show the server's generic message as is */
       setErr(e.message);
     }
     setBusy(false);
@@ -316,7 +316,7 @@ export default function AuthModal() {
   const { authView, closeAuth } = useReader();
   const router = useRouter();
 
-  /* Kise link (terms/privacy naveen tab vich; baaki same tab) te navigate → modal band */
+  /* Navigating via any link (terms/privacy open in a new tab; the rest in the same tab) → close the modal */
   useEffect(() => {
     router.events.on('routeChangeStart', closeAuth);
     return () => router.events.off('routeChangeStart', closeAuth);

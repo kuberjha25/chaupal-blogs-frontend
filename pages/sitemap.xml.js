@@ -1,9 +1,9 @@
-/* Dynamic sitemap — backend /api/public/sitemap ton URLs */
+/* Dynamic sitemap — URLs from the backend's /api/public/sitemap */
 import { API_INTERNAL as API } from '@/lib/api';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
-/* Static pages (pages/*.jsx) — backend down hove taan vi sitemap vich */
+/* Static pages (pages/*.jsx) — in the sitemap even when the backend is down */
 const STATIC_PAGES = ['/latest', '/privacy-policy', '/terms-and-conditions', '/contact-us'];
 
 const xmlEscape = (s) =>
@@ -19,7 +19,7 @@ export async function getServerSideProps({ res }) {
       (d.posts || []).map((p) => ({ loc: `/article/${p.slug}`, lastmod: p.updated_at }))
     );
   } catch (e) {
-    /* backend down — home te static pages hi sahi */
+    /* backend down — just home and the static pages */
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

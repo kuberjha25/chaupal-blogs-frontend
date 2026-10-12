@@ -1,8 +1,8 @@
-/* Reader (public site account) — sirf client te load hunda, SSR output te koi asar nahi (pages cacheable rehnde) */
+/* Reader (public site account) — loads on the client only, no effect on SSR output (pages stay cacheable) */
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { API_URL } from './api';
 
-/* Reader endpoints: cookie session (credentials:'include'); har POST te JSON + X-CTC header (CSRF guard) */
+/* Reader endpoints: cookie session (credentials:'include'); JSON + X-CTC header on every POST (CSRF guard) */
 export async function readerFetch(path, { method = 'GET', body } = {}) {
   const opts = { method, credentials: 'include', headers: {} };
   if (method !== 'GET') {
@@ -30,7 +30,7 @@ const ReaderCtx = createContext(null);
 export function ReaderProvider({ children }) {
   const [reader, setReader] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [authView, setAuthView] = useState(null); // null = modal band; 'login' | 'signup' | 'forgot' | 'delete'
+  const [authView, setAuthView] = useState(null); // null = modal closed; 'login' | 'signup' | 'forgot' | 'delete'
 
   const refresh = useCallback(async () => {
     try {
@@ -40,7 +40,7 @@ export function ReaderProvider({ children }) {
       setReader(r);
       return r;
     } catch (e) {
-      /* Network / server error → logged-out wangu treat (page kade block nahi) */
+      /* Network / server error → treat as logged out (never block the page) */
       setReader(null);
       return null;
     } finally {
@@ -52,12 +52,12 @@ export function ReaderProvider({ children }) {
     try {
       await readerFetch('/api/reader/logout', { method: 'POST' });
     } catch (e) {
-      /* session pehla hi khatam ho sakdi */
+      /* the session may already have ended */
     }
     setReader(null);
   }, []);
 
-  /* Mount te ik vaar — render kade block nahi hunda */
+  /* Once on mount — never blocks rendering */
   useEffect(() => {
     refresh();
   }, [refresh]);

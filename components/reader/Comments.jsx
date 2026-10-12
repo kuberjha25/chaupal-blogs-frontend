@@ -1,4 +1,4 @@
-/* Article comments — approved list (client fetch, article SSR cacheable rehnda) + reader-only form */
+/* Article comments — approved list (client fetch, so the article SSR stays cacheable) + reader-only form */
 import { useEffect, useState } from 'react';
 import { readerFetch, useReader } from '@/lib/reader';
 
@@ -34,7 +34,7 @@ export default function Comments({ slug }) {
       setBody('');
     } catch (ex) {
       setErr(ex.message);
-      /* Session expire ho gaya → reader state taaza karo (form "Log in" ban jaanda) */
+      /* Session expired → refresh the reader state (the form turns into "Log in") */
       if (ex.status === 401) refresh();
     }
     setBusy(false);

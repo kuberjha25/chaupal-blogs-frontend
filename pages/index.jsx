@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ssrGet, markUnavailable } from '@/lib/api';
+import { ssrGet, markUnavailable, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Unavailable from '@/components/site/Unavailable';
 import Footer from '@/components/site/Footer';
@@ -22,9 +22,9 @@ const fmtCal = (d) => {
 export async function getServerSideProps({ res }) {
   try {
     const data = await ssrGet('/api/public/home');
-    return { props: { data } };
+    return { props: { data: { ...data, settings: withNav(data.settings, data) } } };
   } catch (e) {
-    /* Home di koi vi backend failure temporary hai — kade 200 nahi */
+    /* Any backend failure on home is temporary — never a 200 */
     markUnavailable(res);
     return { props: { data: null } };
   }
@@ -33,7 +33,7 @@ export async function getServerSideProps({ res }) {
 export default function Home({ data }) {
   const [mood, setMood] = useState(null);
 
-  /* Backend down / seed nahi hua → frontend te koi content nahi (sab data API ton aanda) */
+  /* Backend down / not seeded → no content on the frontend (all data comes from the API) */
   if (!data) {
     return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao te `npm run seed` kar lo.</Unavailable>;
   }
@@ -77,51 +77,60 @@ export default function Home({ data }) {
         {hero ? (
           <section className="hero tone-1" id="top" aria-label="Featured story">
             <div className="hero-shell">
-              <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
-              <div className="hero-panel">
-                <div className="chiprow">
-                  <span className="chip">{(hero.category || '').toUpperCase()}</span>
-                  <span className="chip quiet">{(hero.boli || '').toUpperCase()}</span>
+              <Link className="hero-link" href={`/article/${hero.slug}`} aria-label={hero.title}>
+                <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
+              </Link>
+              {hero.image ? (
+                /* No panel when there is an image (it used to cover the image) → h1 for screen readers only */
+                <h1 className="sr-only">{hero.title}</h1>
+              ) : (
+                <div className="hero-panel">
+                  <div className="chiprow">
+                    <span className="chip">{(hero.category || '').toUpperCase()}</span>
+                    <span className="chip quiet">{(hero.boli || '').toUpperCase()}</span>
+                  </div>
+                  <h1 className="display">{hero.title.split(':')[0].toUpperCase()}</h1>
+                  <p className="dek">{hero.dek}</p>
+                  <div className="meta">{`${(hero.boli || '').toUpperCase()} · ${hero.read_minutes} MIN READ`}</div>
+                  <div className="hero-ctas">
+                    <Link className="btn btn-lg" href={`/article/${hero.slug}`}>Read the full breakdown →</Link>
+                    <a className="btn btn-lg btn-ghost" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
+                      <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5 L12.5 7 L2 12.5 Z" fill="currentColor" /></svg>
+                      Watch on Chaupal
+                    </a>
+                  </div>
                 </div>
-                <h1 className="display">{hero.title.split(':')[0].toUpperCase()}</h1>
-                <p className="dek">{hero.dek}</p>
-                <div className="meta">{`${(hero.boli || '').toUpperCase()} · ${hero.read_minutes} MIN READ`}</div>
-                <div className="hero-ctas">
-                  <Link className="btn btn-lg" href={`/article/${hero.slug}`}>Read the full breakdown →</Link>
-                  <a className="btn btn-lg btn-ghost" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
-                    <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5 L12.5 7 L2 12.5 Z" fill="currentColor" /></svg>
-                    Watch on Chaupal
-                  </a>
-                </div>
-              </div>
+              )}
               <Phulkari up style={{ position: 'absolute', left: 0, bottom: 0 }} />
             </div>
           </section>
         ) : (
-          /* Hero nahi → vi page da ik h1 (heading order h1 → h2 bachda) */
+          /* No hero → the page still gets one h1 (keeps the h1 → h2 heading order) */
           <h1 className="sr-only">{settings.site_title}</h1>
         )}
 
         {/* TOP 10 */}
-        <section className="section" id="top10">
-          <div className="wrap">
-            <SectionHead kicker="CHARTS · ALL THREE BOLIS" title="TOP 10 ON CHAUPAL THIS WEEK" hint tight />
-            <div className="rail" style={{ marginTop: 26 }}>
-              {top10.map((t, i) => (
-                <a key={t.rank_no} className="ocard rankcard" href={t.link || settings.watch_url} target="_blank" rel="noopener noreferrer">
-                  <ArtGhost tone={t.tone} glyph={t.glyph} script={t.glyph_script} ghostStyle={{ top: '36%' }} tag={i === 0 ? 'POSTER 2:3' : undefined}>
-                    <span className="rank" aria-hidden="true">{t.rank_no}</span>
-                    {i === top10.length - 1 ? <span className="viewall">View all 10 →</span> : null}
-                  </ArtGhost>
-                  <span className="otext">
-                    <span className="ot">{t.title}</span>
-                    <span className="om">{t.boli}</span>
-                  </span>
-                </a>
-              ))}
+        {top10.length ? (
+          <section className="section" id="top10">
+            <div className="wrap">
+              <SectionHead kicker="CHARTS · ALL THREE BOLIS" title="TOP 10 ON CHAUPAL THIS WEEK" hint tight />
+              <div className="rail" style={{ marginTop: 26 }}>
+                {top10.map((t, i) => (
+                  <a key={t.rank_no} className="ocard rankcard" href={t.link || settings.watch_url} target="_blank" rel="noopener noreferrer">
+                    <ArtGhost tone={t.tone} glyph={t.glyph} script={t.glyph_script} ghostStyle={{ top: '36%' }} tag={i === 0 ? 'POSTER 2:3' : undefined}>
+                      <span className="rank" aria-hidden="true">{t.rank_no}</span>
+                      {i === top10.length - 1 ? <span className="viewall">View all 10 →</span> : null}
+                    </ArtGhost>
+                    <span className="otext">
+                      <span className="ot">{t.title}</span>
+                      <span className="om">{t.boli}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* LATEST */}
         <section className="section on-band" id="latest">
@@ -160,13 +169,15 @@ export default function Home({ data }) {
                   </span>
                 </Link>
               ) : null}
-              <a className="ocard" href="#play">
-                <span className="art qcard"><span className="qword">QUIZ TIME</span></span>
-                <span className="otext">
-                  <span className="sk c-acc">QUIZ</span>
-                  <span className="ot">{quiz ? quiz.title : 'Kaunsi Chaupal film hai tuhadi weekend match?'}</span>
-                </span>
-              </a>
+              {quiz || poll ? (
+                <a className="ocard" href="#play">
+                  <span className="art qcard"><span className="qword">QUIZ TIME</span></span>
+                  <span className="otext">
+                    <span className="sk c-acc">QUIZ</span>
+                    <span className="ot">{quiz ? quiz.title : 'Kaunsi Chaupal film hai tuhadi weekend match?'}</span>
+                  </span>
+                </a>
+              ) : null}
               {latest.row[1] ? (
                 <Link className="ocard" href={`/article/${latest.row[1].slug}`}>
                   <ArtGhost tone={latest.row[1].art_tone} glyph={latest.row[1].ghost_glyph} script={latest.row[1].glyph_script} image={latest.row[1].image} alt={latest.row[1].title} />
@@ -181,79 +192,85 @@ export default function Home({ data }) {
         </section>
 
         {/* WHAT TO WATCH */}
-        <section className="section" id="watch">
-          <div className="wrap">
-            <SectionHead kicker="WHAT TO WATCH" title={'TONIGHT\u2019S PICKS, SORTED BY MOOD'} hint tight />
-            <div className="moods" role="group" aria-label="Mood filters">
-              {moods.map((m) => (
-                <button key={m} className={`pill${mood === m ? ' active' : ''}`} type="button" onClick={() => setMood(mood === m ? null : m)}>
-                  {m}
-                </button>
-              ))}
+        {picks.length ? (
+          <section className="section" id="watch">
+            <div className="wrap">
+              <SectionHead kicker="WHAT TO WATCH" title={'TONIGHT\u2019S PICKS, SORTED BY MOOD'} hint tight />
+              <div className="moods" role="group" aria-label="Mood filters">
+                {moods.map((m) => (
+                  <button key={m} className={`pill${mood === m ? ' active' : ''}`} type="button" onClick={() => setMood(mood === m ? null : m)}>
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <div className="picks">
+                {shownPicks.map((p) => (
+                  <div key={p.title} className="ocard pick">
+                    <ArtGhost tone={p.tone} glyph={p.glyph} script={p.glyph_script} />
+                    <span className="otext">
+                      <span className="ot">{p.title}</span>
+                      <span className="why">{p.why}</span>
+                      <a className="go" href={p.link} target="_blank" rel="noopener noreferrer">Watch on Chaupal →</a>
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="picks">
-              {shownPicks.map((p) => (
-                <div key={p.title} className="ocard pick">
-                  <ArtGhost tone={p.tone} glyph={p.glyph} script={p.glyph_script} />
-                  <span className="otext">
-                    <span className="ot">{p.title}</span>
-                    <span className="why">{p.why}</span>
-                    <a className="go" href={p.link} target="_blank" rel="noopener noreferrer">Watch on Chaupal →</a>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* BOLI HUBS */}
-        <section className="section on-band" id="boli">
-          <div className="wrap">
-            <SectionHead kicker="PICK YOUR BOLI" title="THREE LANGUAGES. ONE CHAUPAL." />
-            <div className="hubs">
-              {hubs.map((h, i) => {
-                const glyphs = { punjabi: 'ਪ', haryanvi: 'ह', bhojpuri: 'भ' };
-                const colors = ['var(--acc)', 'var(--hv)', 'var(--bj)'];
-                const texts = ['c-acc', 'c-hv', 'c-bj'];
-                return (
-                  <a key={h.slug} className={`hub hubtone-${i + 1}`} href="#latest">
-                    <span className={`bigglyph ${i === 0 ? 'glyph-gurmukhi' : 'glyph-devanagari'}`} aria-hidden="true" style={{ color: colors[i], opacity: i === 0 ? 0.16 : 0.18 }}>
-                      {glyphs[h.slug] || 'ਚ'}
-                    </span>
-                    <span className="hubtext">
-                      <h3 className="display">{h.name.toUpperCase()}</h3>
-                      <p>{h.post_count} stories te counting — {h.name} di apni chaupal.</p>
-                      <span className={`go ${texts[i]}`} style={{ fontWeight: 800, fontSize: 13 }}>Enter hub →</span>
-                    </span>
-                  </a>
-                );
-              })}
+        {hubs.length ? (
+          <section className="section on-band" id="boli">
+            <div className="wrap">
+              <SectionHead kicker="PICK YOUR BOLI" title="THREE LANGUAGES. ONE CHAUPAL." />
+              <div className="hubs">
+                {hubs.map((h, i) => {
+                  const glyphs = { punjabi: 'ਪ', haryanvi: 'ह', bhojpuri: 'भ' };
+                  const colors = ['var(--acc)', 'var(--hv)', 'var(--bj)'];
+                  const texts = ['c-acc', 'c-hv', 'c-bj'];
+                  return (
+                    <a key={h.slug} className={`hub hubtone-${i + 1}`} href="#latest">
+                      <span className={`bigglyph ${i === 0 ? 'glyph-gurmukhi' : 'glyph-devanagari'}`} aria-hidden="true" style={{ color: colors[i], opacity: i === 0 ? 0.16 : 0.18 }}>
+                        {glyphs[h.slug] || 'ਚ'}
+                      </span>
+                      <span className="hubtext">
+                        <h3 className="display">{h.name.toUpperCase()}</h3>
+                        <p>{h.post_count} stories te counting — {h.name} di apni chaupal.</p>
+                        <span className={`go ${texts[i]}`} style={{ fontWeight: 800, fontSize: 13 }}>Enter hub →</span>
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* TRAILERS */}
-        <section className="section" id="trailers">
-          <div className="wrap">
-            <SectionHead kicker="WATCH" title="TRAILERS & FIRST LOOKS" hint tight />
-            <div className="vids" style={{ marginTop: 26 }}>
-              {videos.map((v) => (
-                <a key={v.title} className="ocard vid" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
-                  <ArtGhost tone={v.tone} glyph={v.glyph} script={v.glyph_script}>
-                    <span className="playbadge" aria-hidden="true">
-                      <svg width="19" height="19" viewBox="0 0 14 14"><path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor" /></svg>
+        {videos.length ? (
+          <section className="section" id="trailers">
+            <div className="wrap">
+              <SectionHead kicker="WATCH" title="TRAILERS & FIRST LOOKS" hint tight />
+              <div className="vids" style={{ marginTop: 26 }}>
+                {videos.map((v) => (
+                  <a key={v.title} className="ocard vid" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
+                    <ArtGhost tone={v.tone} glyph={v.glyph} script={v.glyph_script}>
+                      <span className="playbadge" aria-hidden="true">
+                        <svg width="19" height="19" viewBox="0 0 14 14"><path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor" /></svg>
+                      </span>
+                      <span className="dur">{v.duration}</span>
+                    </ArtGhost>
+                    <span className="otext">
+                      <span className="ot">{v.title}</span>
+                      <span className="om">{v.kind}</span>
                     </span>
-                    <span className="dur">{v.duration}</span>
-                  </ArtGhost>
-                  <span className="otext">
-                    <span className="ot">{v.title}</span>
-                    <span className="om">{v.kind}</span>
-                  </span>
-                </a>
-              ))}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* TITLE HUB */}
         {titleHub ? (
@@ -267,7 +284,7 @@ export default function Home({ data }) {
                   <p>{titleHub.blurb}</p>
                   <div className="tabs">
                     <Link className="pill" href="#latest">News</Link>
-                    <Link className="pill" href="#trailers">Trailer</Link>
+                    {videos.length ? <Link className="pill" href="#trailers">Trailer</Link> : null}
                     <Link className="pill" href={`/article/${titleHub.article_slug}`}>Episode guide</Link>
                     <a className="pill active" href={titleHub.watch_link} target="_blank" rel="noopener noreferrer">Watch now</a>
                   </div>
@@ -278,60 +295,66 @@ export default function Home({ data }) {
         ) : null}
 
         {/* QUIZ + POLL */}
-        <section className="section" id="play">
-          <div className="wrap">
-            <SectionHead kicker="PLAY" title="QUIZZES TE POLLS" />
-            <div className="play-grid">
-              <QuizWidget quiz={quiz} />
-              <PollWidget poll={poll} />
+        {quiz || poll ? (
+          <section className="section" id="play">
+            <div className="wrap">
+              <SectionHead kicker="PLAY" title="QUIZZES TE POLLS" />
+              <div className="play-grid">
+                <QuizWidget quiz={quiz} />
+                <PollWidget poll={poll} />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* CHARCHA SESSIONS */}
-        <section className="section on-band" id="sessions">
-          <div className="wrap">
-            <SectionHead kicker="CHARCHA SESSIONS" title="INTERVIEWS & BEHIND THE SCENES" hint tight />
-            <div className="vids" style={{ marginTop: 26 }}>
-              {sessions.map((s) => (
-                <a key={s.title} className="ocard bts" href="#latest">
-                  <span className={`art hubtone-${s.tone}`}>
-                    <span className="ghost" aria-hidden="true">{s.glyph_text.split(' ').slice(0, 2).join(' ')}<br />{s.glyph_text.split(' ').slice(2).join(' ')}</span>
-                  </span>
-                  <span className="otext">
-                    <span className="ot">{s.title}</span>
-                    <span className="om">{s.meta}</span>
-                  </span>
-                </a>
-              ))}
+        {sessions.length ? (
+          <section className="section on-band" id="sessions">
+            <div className="wrap">
+              <SectionHead kicker="CHARCHA SESSIONS" title="INTERVIEWS & BEHIND THE SCENES" hint tight />
+              <div className="vids" style={{ marginTop: 26 }}>
+                {sessions.map((s) => (
+                  <a key={s.title} className="ocard bts" href="#latest">
+                    <span className={`art hubtone-${s.tone}`}>
+                      <span className="ghost" aria-hidden="true">{s.glyph_text.split(' ').slice(0, 2).join(' ')}<br />{s.glyph_text.split(' ').slice(2).join(' ')}</span>
+                    </span>
+                    <span className="otext">
+                      <span className="ot">{s.title}</span>
+                      <span className="om">{s.meta}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* CALENDAR */}
-        <section className="section" id="calendar">
-          <div className="wrap">
-            <SectionHead kicker="CALENDAR" title="NEW ON CHAUPAL — EVERY FRIDAY" hint tight />
-            <div className="rail" style={{ marginTop: 24 }}>
-              {calendar.map((c, i) =>
-                c.is_tba ? (
-                  <div key={i} className="calcard tba">
-                    <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--acc-text)' }}>{c.title}</div>
-                    <div className="smallnote">{c.kind}</div>
-                  </div>
-                ) : (
-                  <div key={i} className={`calcard${i === 0 ? ' now' : ''}`}>
-                    <div>
-                      <div className={`caldate ${c.boli === 'hv' ? 'c-hv' : c.boli === 'bj' ? 'c-bj' : 'c-acc'}`}>{fmtCal(c.release_date)}</div>
-                      <div className="display caltitle">{c.title}</div>
+        {calendar.length ? (
+          <section className="section" id="calendar">
+            <div className="wrap">
+              <SectionHead kicker="CALENDAR" title="NEW ON CHAUPAL — EVERY FRIDAY" hint tight />
+              <div className="rail" style={{ marginTop: 24 }}>
+                {calendar.map((c, i) =>
+                  c.is_tba ? (
+                    <div key={i} className="calcard tba">
+                      <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--acc-text)' }}>{c.title}</div>
+                      <div className="smallnote">{c.kind}</div>
                     </div>
-                    <div className="calmeta">{c.kind}</div>
-                  </div>
-                )
-              )}
+                  ) : (
+                    <div key={i} className={`calcard${i === 0 ? ' now' : ''}`}>
+                      <div>
+                        <div className={`caldate ${c.boli === 'hv' ? 'c-hv' : c.boli === 'bj' ? 'c-bj' : 'c-acc'}`}>{fmtCal(c.release_date)}</div>
+                        <div className="display caltitle">{c.title}</div>
+                      </div>
+                      <div className="calmeta">{c.kind}</div>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* NEWSLETTER */}
         <section className="newsletter" aria-label="Newsletter">

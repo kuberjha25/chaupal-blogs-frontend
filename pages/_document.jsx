@@ -21,7 +21,7 @@ export default function Document() {
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/favicon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        {/* Theme first-paint ton pehla — stored choice jitdi hai; default: home dark, article/login/studio light */}
+        {/* Theme before first paint — the stored choice wins; default: home dark, article/login/studio light */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=null;try{t=localStorage.getItem('ctc-theme');}catch(e){}if(!t){t=/^\\/(article|login|studio|privacy-policy|terms-and-conditions|contact-us)/.test(location.pathname)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);})();`,

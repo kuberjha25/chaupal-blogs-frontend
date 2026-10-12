@@ -1,6 +1,6 @@
 // Static page copied from the old WordPress site (privacy-policy). Edit the text in BODY below.
 import Head from 'next/head';
-import { ssrGet } from '@/lib/api';
+import { ssrGet, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
 
@@ -11,8 +11,8 @@ const BODY = "<p>Last updated: April 17, 2024</p>\n\n<p>This Privacy Policy desc
 
 export async function getServerSideProps() {
   try {
-    const { settings } = await ssrGet('/api/public/home');
-    return { props: { settings: settings || {} } };
+    const home = await ssrGet('/api/public/home');
+    return { props: { settings: withNav(home.settings, home) } };
   } catch (e) {
     return { props: { settings: {} } };
   }

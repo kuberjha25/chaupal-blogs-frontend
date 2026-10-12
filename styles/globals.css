@@ -1,6 +1,6 @@
 /* ============================================================
    Chaupal Te Charcha — "Mitti te Gold" design system
-   Site + Article + Login + Studio + Editor, sab ik file vich
+   Site + Article + Login + Studio + Editor, all in one file
    ============================================================ */
 
 :root {
@@ -66,11 +66,11 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 13px; font-weight: 800; letter-spacing: 0.5px;
 }
 .btn:hover { filter: brightness(1.06); color: var(--on-acc); }
-/* Outline button — apni class; ".ghost" background glyph di class hai (position:absolute), kade button te na lao */
+/* Outline button — its own class; ".ghost" is the background glyph's class (position:absolute), never put it on a button */
 .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--strong); }
 .btn-ghost:hover { border-color: var(--acc); color: var(--ink); filter: none; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
-/* Link wangu dikhan wala button (footer account links, "Forgot password?") */
+/* Button that looks like a link (footer account links, "Forgot password?") */
 .linkbtn { background: none; border: 0; padding: 0; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .linkbtn:hover { color: var(--acc-text); }
 .linkbtn:disabled { opacity: 0.55; cursor: not-allowed; text-decoration: none; }
@@ -163,6 +163,10 @@ body.menu-open { overflow: hidden; }
 .ghost { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -52%); line-height: 1; color: var(--ghost); opacity: 0.08; user-select: none; }
 .arttag { position: absolute; top: 12px; right: 14px; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: var(--tag); }
 .artimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* With an image, the container takes the image's own shape (no cropping) — each slot's fixed aspect-ratio is only for the ghost placeholder.
+   `span.` so the specificity beats slot rules like `.feature .art` */
+span.art.has-img { aspect-ratio: auto; min-height: 0; }
+span.art.has-img .artimg { position: static; display: block; width: 100%; height: auto; }
 .phulkari { display: block; width: 100%; height: 8px; }
 
 /* ---------------- Hero ---------------- */
@@ -170,6 +174,7 @@ body.menu-open { overflow: hidden; }
 .hero-shell {
   position: relative; width: 100%;
 }
+.hero-link { display: block; }
 .hero-art { position: relative; display: block; width: 100%; min-height: clamp(420px, 44vw, 600px); overflow: hidden; }
 .hero-art .ghost { font-size: clamp(220px, 32vw, 460px); left: 66%; top: 44%; opacity: 0.07; }
 .hero-panel {
@@ -180,7 +185,7 @@ body.menu-open { overflow: hidden; }
   display: flex; flex-direction: column; gap: 15px;
   backdrop-filter: blur(6px);
 }
-/* ~26px phone → ~41px @1280 → 44px max (pehla 62px ton ik-tihai ghatt) */
+/* ~26px phone → ~41px @1280 → 44px max (a third smaller than the earlier 62px) */
 .hero-panel h1 { margin: 0; font-size: clamp(26px, 1.7vw + 19.6px, 44px); line-height: 1.05; overflow-wrap: break-word; }
 .hero-panel .dek { font-size: clamp(14px, 1.2vw, 16px); line-height: 1.55; color: var(--mut); margin: 0; }
 .meta { font-size: 12px; font-weight: 700; letter-spacing: 1.4px; color: var(--dim); }
@@ -397,7 +402,7 @@ body.menu-open { overflow: hidden; }
 .seemore { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; font-weight: 800; color: var(--acc-text); }
 .toc-mob { display: none; }
 
-/* Rendered post body (DB HTML) — editor de styles nal match */
+/* Rendered post body (DB HTML) — matches the editor's styles */
 .postbody { font-size: 17px; line-height: 1.75; }
 .postbody > * { margin: 0 0 14px; }
 .postbody h2 { font-family: 'Anton', 'Arial Narrow', sans-serif; font-weight: 400; letter-spacing: 0.5px; font-size: clamp(22px, 2.2vw, 30px); margin: 26px 0 10px; scroll-margin-top: 140px; }
@@ -536,11 +541,22 @@ body.menu-open { overflow: hidden; }
 .artslot .ghost { font-size: 110px; }
 .artslot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .artslot .btn { position: relative; }
+/* Image uploaded → the slot also takes the image's own shape (like the site), button sits over the image */
+.artslot.has-img { aspect-ratio: auto; display: block; padding: 0; }
+.artslot.has-img img { position: static; display: block; width: 100%; height: auto; }
+.artslot.has-img .btn { position: absolute; left: 12px; bottom: 12px; }
+.imgcheck { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: var(--dim); line-height: 1.5; }
+.imgcheck b { color: var(--ink); font-weight: 800; }
+.imgcheck .res { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.imgcheck .fn { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imgcheck .ok { color: var(--ok); }
+.imgcheck .bad { color: var(--bj); }
+.edwrap > .imgcheck { padding: 8px 14px; border-top: 1px solid var(--line); background: var(--card2); }
 .lockednote { border: 1px dashed var(--strong); border-radius: 12px; background: var(--card2); padding: 14px; font-size: 12.5px; color: var(--dim); line-height: 1.55; }
 .mediagrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .mtile { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
 .mtile .mart { position: relative; aspect-ratio: 4 / 3; display: block; background: var(--band2); }
-.mtile .mart img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mtile .mart img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .mtile .mi { padding: 10px 12px; font-size: 11.5px; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; color: var(--mut); }
 .playgrid, .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 .stackcol { display: flex; flex-direction: column; gap: 16px; }

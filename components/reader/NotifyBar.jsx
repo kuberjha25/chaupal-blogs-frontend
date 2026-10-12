@@ -1,9 +1,9 @@
-/* Push notification prompt — sirf logged-in readers layi, slim bottom bar (anonymous visitors nu kade nahi) */
+/* Push notification prompt — only for logged-in readers, slim bottom bar (never shown to anonymous visitors) */
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { readerFetch, useReader } from '@/lib/reader';
 
-const LATER_KEY = 'ctc-notif-later'; // "Not now" — sirf is browser session layi
+const LATER_KEY = 'ctc-notif-later'; // "Not now" — for this browser session only
 const DENIED_KEY = 'ctc-notif-denied-sent';
 
 const ssGet = (k) => {
@@ -55,7 +55,7 @@ export default function NotifyBar() {
       setMode(null);
       return;
     }
-    if (mode === 'denied') return; // hint dikh raha — user band kare
+    if (mode === 'denied') return; // hint is showing — the user closes it
     if (reader.notif_status === 'granted' || ssGet(LATER_KEY)) {
       setMode(null);
       return;
@@ -80,7 +80,7 @@ export default function NotifyBar() {
     setMode(null);
   }, [reader, hiddenRoute]); // eslint-disable-line
 
-  /* Bar footer nu na dhakke — body thalle jagah */
+  /* Keep the bar from covering the footer — add space below the body */
   useEffect(() => {
     document.body.classList.toggle('has-nbar', Boolean(mode));
     return () => document.body.classList.remove('has-nbar');
@@ -112,7 +112,7 @@ export default function NotifyBar() {
         reportDenied();
         setMode('denied');
       } else {
-        later(); // prompt band kar ditta — agli visit te phir
+        later(); // prompt dismissed — ask again on the next visit
       }
     } catch (e) {
       setErr(e.message || 'Could not turn on notifications. Please try again.');

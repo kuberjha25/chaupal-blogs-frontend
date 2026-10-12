@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
     setAuth(null);
   };
 
-  /* can('publish') ya can('edit-content,edit-meta') — koi ek match kaafi */
+  /* can('publish') or can('edit-content,edit-meta') — any one match is enough */
   const can = (perms) => {
     if (!auth || !auth.permissions) return false;
     return String(perms)

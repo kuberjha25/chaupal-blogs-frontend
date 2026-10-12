@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ArtGhost } from './bits';
 
-/* ---------------- QUIZ — poora config DB ton (questions + results) ---------------- */
+/* ---------------- QUIZ — full config from the DB (questions + results) ---------------- */
 export function QuizWidget({ quiz }) {
   const [step, setStep] = useState(0);
   const [ans, setAns] = useState({});
@@ -73,7 +73,7 @@ export function QuizWidget({ quiz }) {
   );
 }
 
-/* ---------------- POLL — votes DB vich save, live percentages ---------------- */
+/* ---------------- POLL — votes saved in the DB, live percentages ---------------- */
 export function PollWidget({ poll }) {
   const [options, setOptions] = useState(poll ? poll.options : []);
   const [voted, setVoted] = useState(false);

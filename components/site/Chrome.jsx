@@ -17,6 +17,9 @@ export default function Chrome({ settings = {}, trending = [] }) {
   const socials = settings.socials || [];
   const eco = settings.ecosystem || [];
   const watchUrl = settings.watch_url || 'https://www.chaupal.com';
+  /* No link for a home section that is empty */
+  const hide = settings.empty_sections || [];
+  const nav = NAV.filter((n) => !hide.includes(n.href.slice(2)));
 
   return (
     <>
@@ -64,7 +67,7 @@ export default function Chrome({ settings = {}, trending = [] }) {
               </span>
             </Link>
             <nav className="nav" aria-label="Sections">
-              {NAV.map((n) => (
+              {nav.map((n) => (
                 <Link key={n.label} href={n.href}>{n.label}</Link>
               ))}
             </nav>
@@ -77,7 +80,7 @@ export default function Chrome({ settings = {}, trending = [] }) {
       </div>
 
       <nav className={`mnav${open ? ' open' : ''}`} aria-label="Mobile sections">
-        {NAV.map((n) => (
+        {nav.map((n) => (
           <Link
             key={n.label}
             className="mlink"

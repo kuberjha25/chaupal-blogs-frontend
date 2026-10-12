@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-/* Backend down → friendly page (getServerSideProps 503 + Retry-After set karda) */
+/* Backend down → friendly page (getServerSideProps sets 503 + Retry-After) */
 export default function Unavailable({ children = 'BACKEND SE DATA NAHI MILA — thodi der baad try karo.' }) {
   return (
     <>

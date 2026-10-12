@@ -17,8 +17,9 @@ import TableHeader from '@tiptap/extension-table-header';
 import Placeholder from '@tiptap/extension-placeholder';
 import { api, mediaUrl } from '@/lib/api';
 import { useToast } from '@/lib/ui';
+import ImageCheck, { IMAGE_SPECS, checkImage } from './ImageCheck';
 
-/* ---- Custom font-size mark (textStyle te style attribute) ---- */
+/* ---- Custom font-size mark (style attribute on textStyle) ---- */
 const FontSize = Extension.create({
   name: 'fontSize',
   addOptions() {
@@ -97,6 +98,7 @@ export default function RichEditor({ value = '', onChange }) {
   const [tCols, setTCols] = useState(3);
   const [tStyle, setTStyle] = useState('t-gold');
   const [tHead, setTHead] = useState(true);
+  const [imgCheck, setImgCheck] = useState(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -121,7 +123,7 @@ export default function RichEditor({ value = '', onChange }) {
     onUpdate: ({ editor: ed }) => onChange && onChange(ed.getHTML()),
   });
 
-  /* Parent async load → editor sync (bina cursor tode) */
+  /* Parent async load → editor sync (without breaking the cursor) */
   useEffect(() => {
     if (editor && value !== undefined && !editor.isFocused && value !== editor.getHTML()) {
       editor.commands.setContent(value || '', false);
@@ -165,6 +167,8 @@ export default function RichEditor({ value = '', onChange }) {
   };
 
   const uploadImage = async (file) => {
+    /* Before the upload — show expected vs actual size immediately */
+    setImgCheck(await checkImage(file, IMAGE_SPECS.inline));
     const fd = new FormData();
     fd.append('file', file);
     fd.append('alt', file.name.replace(/\.[^.]+$/, ''));
@@ -387,6 +391,7 @@ export default function RichEditor({ value = '', onChange }) {
       </div>
       <textarea className="rtesrc" value={html} onChange={(e) => setHtml(e.target.value)} spellCheck={false} aria-label="HTML source" />
 
+      <ImageCheck spec={IMAGE_SPECS.inline} result={imgCheck} />
       <div className="rtestatus">
         <span>{src ? 'HTML SOURCE MODE — &lt;/&gt; dubara dabao to render' : `${words} WORDS · ~${Math.max(1, Math.round(words / 200))} MIN READ`}</span>
         <span>AUTO-WEBP UPLOADS · TABLES · ਗੁਰਮੁਖੀ + देवनागरी READY</span>

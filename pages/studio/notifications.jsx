@@ -7,14 +7,14 @@ import { fmtDateTime } from '@/lib/format';
 const TITLE_MAX = 65;
 const MSG_MAX = 150;
 const CUSTOM = '__custom';
-const PATH_RE = /^\/(?!\/)\S*$/; // same-site path: "/" naal shuru, "//" nahi, spaces nahi
+const PATH_RE = /^\/(?!\/)\S*$/; // same-site path: starts with "/", not "//", no spaces
 
 export default function Notifications() {
   const { user } = useAuth();
   const allowed = Boolean(user && READER_ROLES.includes(user.role));
 
   const [history, setHistory] = useState(null);
-  const [granted, setGranted] = useState(null); // null = hale load nahi hoya
+  const [granted, setGranted] = useState(null); // null = not loaded yet
   const [posts, setPosts] = useState([]);
   const [loadErr, setLoadErr] = useState('');
 
@@ -90,7 +90,7 @@ export default function Notifications() {
     );
   }
 
-  /* Send sirf tad jad backend ne granted > 0 dasya (load na hoya / 0 → band) */
+  /* Send only when the backend reported granted > 0 (not loaded / 0 → disabled) */
   const canSend = granted > 0;
 
   return (

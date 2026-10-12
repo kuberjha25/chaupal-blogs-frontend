@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ssrGet, absMediaUrl, isBackendDown, markUnavailable } from '@/lib/api';
+import { ssrGet, absMediaUrl, isBackendDown, markUnavailable, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Comments from '@/components/reader/Comments';
 import Footer from '@/components/site/Footer';
@@ -9,11 +9,11 @@ import Unavailable from '@/components/site/Unavailable';
 import { ArtGhost, SectionHead, SocialLinks } from '@/components/site/bits';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-/* Publisher logo — public/favicon.png (64×64 PNG), site da ikko-ik logo asset */
+/* Publisher logo — public/favicon.png (64×64 PNG), the site's only logo asset */
 const LOGO = { url: `${SITE}/favicon.png`, width: 64, height: 64 };
 const boliClass = (b) => (b === 'Haryanvi' ? 'c-hv' : b === 'Bhojpuri' ? 'c-bj' : 'c-acc');
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
-/* Meta / JSON-LD layi ISO 8601; invalid ya khali → undefined (tag hi nahi bannda) */
+/* ISO 8601 for meta / JSON-LD; invalid or empty → undefined (the tag is not rendered at all) */
 const iso = (d) => {
   const t = d ? new Date(d) : null;
   return t && !Number.isNaN(t.getTime()) ? t.toISOString() : undefined;
@@ -21,10 +21,14 @@ const iso = (d) => {
 
 export async function getServerSideProps({ params, res }) {
   try {
-    const data = await ssrGet(`/api/public/posts/${encodeURIComponent(params.slug)}`);
-    return { props: { data } };
+    const [data, home] = await Promise.all([
+      ssrGet(`/api/public/posts/${encodeURIComponent(params.slug)}`),
+      /* Only for the header/footer links — if it fails, all links show and the article still loads */
+      ssrGet('/api/public/home').catch(() => null),
+    ]);
+    return { props: { data: home ? { ...data, settings: withNav(data.settings, home) } : data } };
   } catch (e) {
-    /* Backend down / 5xx → 503 (friendly page); asli 4xx (404 wagera) → 404 */
+    /* Backend down / 5xx → 503 (friendly page); a real 4xx (404 etc.) → 404 */
     if (isBackendDown(e)) {
       markUnavailable(res);
       return { props: { data: null } };
@@ -211,7 +215,7 @@ export default function Article({ data }) {
                 <figcaption className="cap">{post.image_alt || `A still from ${post.title.split(':')[0]}. Courtesy: Chaupal`}</figcaption>
               </figure>
 
-              {/* Body — studio editor da HTML, DB ton */}
+              {/* Body — HTML from the studio editor, stored in the DB */}
               <div className="postbody" dangerouslySetInnerHTML={{ __html: post.body }} />
 
               <div className="streamrow">
@@ -236,7 +240,7 @@ export default function Article({ data }) {
                 </span>
               </div>
 
-              {/* Approved comments + reader-only form → moderation queue (dono client te load) */}
+              {/* Approved comments + reader-only form → moderation queue (both load on the client) */}
               <Comments slug={post.slug} />
             </article>
           </div>

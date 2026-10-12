@@ -1,9 +1,9 @@
-/* Chaupal Te Charcha — push-only service worker. Koi fetch handler / cache NAHI: pages hamesha network ton. */
+/* Chaupal Te Charcha — push-only service worker. NO fetch handler / cache: pages always come from the network. */
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
-/* Sirf apni site de URLs kholo; bahar da ya kharab URL → home */
+/* Open only our own site's URLs; an external or malformed URL → home */
 function safeUrl(u) {
   try {
     const url = new URL(u || '/', self.location.origin);

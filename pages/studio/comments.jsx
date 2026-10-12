@@ -52,7 +52,7 @@ export default function Comments() {
         <div className="card">
           {rows.map((cm) => {
             const [cls, lbl] = ST[cm.status] || ST.pending;
-            /* author_name = reader da naam; reader_id → READER chip (purane anonymous comments te null) */
+            /* author_name = the reader's name; reader_id → READER chip (null on old anonymous comments) */
             const name = cm.author_name || 'Reader';
             return (
               <div key={cm.id} className="crow">

@@ -1,4 +1,4 @@
-/* Footer account links — SSR te hamesha "Login / Sign up" (output stable), client te reader load hon baad badalda */
+/* Footer account links — always "Login / Sign up" in SSR (stable output); changes on the client once the reader loads */
 import { firstName, useReader } from '@/lib/reader';
 
 export default function ReaderLinks() {
