@@ -100,12 +100,15 @@ export default function Chrome({ settings = {}, trending = [] }) {
         <div className="ticker">
           <div className="wrap">
             <span className="tlabel">TRENDING</span>
-            {trending.map((t, i) => (
-              <span key={t.slug} style={{ display: 'contents' }}>
-                {i > 0 && <span className="tdot" aria-hidden="true">·</span>}
-                <Link href={`/article/${t.slug}`}>{t.title}</Link>
-              </span>
-            ))}
+            {/* One line: the short title (before the ":"), full title on hover; swipe/scroll for more */}
+            <div className="titems">
+              {trending.map((t, i) => (
+                <span key={t.slug} style={{ display: 'contents' }}>
+                  {i > 0 && <span className="tdot" aria-hidden="true">·</span>}
+                  <Link href={`/article/${t.slug}`} title={t.title}>{t.title.split(':')[0]}</Link>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       ) : null}

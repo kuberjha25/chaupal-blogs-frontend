@@ -129,9 +129,13 @@ button { font-family: inherit; cursor: pointer; }
 .icon-sun, html[data-theme="light"] .icon-moon { display: none; }
 html[data-theme="light"] .icon-sun { display: block; }
 .ticker { background: var(--band); border-bottom: 1px solid var(--line); }
-.ticker .wrap { min-height: 44px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-block: 8px; }
-.tlabel { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: var(--acc-text); }
-.ticker a { font-size: 13px; font-weight: 600; color: var(--mut); }
+.ticker .wrap { height: 40px; display: flex; align-items: center; gap: 14px; }
+.tlabel { flex: none; font-size: 11px; font-weight: 800; letter-spacing: 2px; color: var(--acc-text); }
+/* Never wraps: extra items scroll sideways, the right edge fades to hint there is more */
+.titems { display: flex; align-items: center; gap: 14px; min-width: 0; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.titems::-webkit-scrollbar { display: none; }
+.ticker a { flex: none; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--mut); }
+.ticker a:hover { color: var(--acc-text); }
 .ticker a:first-of-type { color: var(--ink); }
 .tdot { color: var(--strong); }
 .mnav {
