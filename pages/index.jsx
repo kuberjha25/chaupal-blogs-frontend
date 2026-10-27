@@ -5,7 +5,8 @@ import { ssrGet, markUnavailable, withNav, absMediaUrl } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Unavailable from '@/components/site/Unavailable';
 import Footer from '@/components/site/Footer';
-import { ArtGhost, SectionHead, Phulkari } from '@/components/site/bits';
+import { ArtGhost, SectionHead } from '@/components/site/bits';
+import { HeroBanner, PostRail } from '@/components/site/Rails';
 import { QuizWidget, PollWidget, NewsletterForm } from '@/components/site/PlayWidgets';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
@@ -19,10 +20,39 @@ const fmtCal = (d) => {
   return `${days[dt.getDay()]} · ${months[dt.getMonth()]} ${dt.getDate()}`;
 };
 
+const RAIL_SIZE = 12;
+const PAGE_SIZE = 24; /* API max per call */
+const PAGES = 3; /* 72 newest posts feed the hero, "Latest stories" and the category rows */
+
 export async function getServerSideProps({ res }) {
   try {
-    const data = await ssrGet('/api/public/home');
-    return { props: { data: { ...data, settings: withNav(data.settings, data) } } };
+    const [data, ...pageResults] = await Promise.all([
+      ssrGet('/api/public/home'),
+      ...Array.from({ length: PAGES }, (_, i) => ssrGet(`/api/public/posts?page=${i + 1}&limit=${PAGE_SIZE}`).catch(() => ({ posts: [] }))),
+    ]);
+    /* API returns newest first (published/scheduled date); re-sort defensively */
+    const when = (p) => new Date(p.published_at || 0).getTime();
+    const all = pageResults.flatMap((r) => r.posts || []).sort((a, b) => when(b) - when(a));
+    const hero = all[0] || null;
+    const rest = all.slice(1);
+
+    const rails = [];
+    if (rest.length) rails.push({ id: 'latest', title: 'Latest stories', posts: rest.slice(0, RAIL_SIZE), href: '/latest' });
+    const group = (key) => {
+      const m = new Map();
+      for (const p of rest) {
+        if (!p[key]) continue;
+        if (!m.has(p[key])) m.set(p[key], []);
+        m.get(p[key]).push(p);
+      }
+      return [...m.entries()].sort((a, b) => b[1].length - a[1].length);
+    };
+    /* No category / hub pages exist yet → no "See all" on these rows */
+    for (const [name, posts] of group('category')) rails.push({ id: `cat-${name}`, title: name, posts: posts.slice(0, RAIL_SIZE), href: null });
+    for (const [name, posts] of group('boli')) rails.push({ id: `boli-${name}`, title: `${name} stories`, posts: posts.slice(0, RAIL_SIZE), href: null });
+
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    return { props: { data: { ...data, hero, rails, settings: withNav(data.settings, data) } } };
   } catch (e) {
     /* Any backend failure on home is temporary — never a 200 */
     markUnavailable(res);
@@ -38,7 +68,7 @@ export default function Home({ data }) {
     return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao te `npm run seed` kar lo.</Unavailable>;
   }
 
-  const { settings, trending, hero, top10, latest, moods, picks, hubs, videos, titleHub, sessions, calendar, quiz, poll } = data;
+  const { settings, trending, hero, rails, top10, moods, picks, hubs, videos, titleHub, sessions, calendar, quiz, poll } = data;
   const shownPicks = mood ? picks.filter((p) => p.mood === mood) : picks;
   const title = settings.seo_home_title || `${settings.site_title} — ${settings.tagline}`;
   const desc = settings.seo_home_description || settings.tagline;
@@ -75,41 +105,17 @@ export default function Home({ data }) {
       <Chrome settings={settings} trending={trending} />
 
       <main id="main">
-        {/* HERO */}
-        {hero ? (
-          <section className="hero tone-1" id="top" aria-label="Featured story">
-            <div className="hero-shell">
-              <Link className="hero-link" href={`/article/${hero.slug}`} aria-label={hero.title}>
-                <ArtGhost className="hero-art" tone={hero.art_tone} glyph={hero.ghost_glyph} script={hero.glyph_script} image={hero.image} width={hero.image_width} height={hero.image_height} eager alt={hero.image_alt || hero.title} tag="KEY ART · FULL BLEED 16:9" />
-              </Link>
-              {hero.image ? (
-                /* No panel when there is an image (it used to cover the image) → h1 for screen readers only */
-                <h1 className="sr-only">{hero.title}</h1>
-              ) : (
-                <div className="hero-panel">
-                  <div className="chiprow">
-                    <span className="chip">{(hero.category || '').toUpperCase()}</span>
-                    <span className="chip quiet">{(hero.boli || '').toUpperCase()}</span>
-                  </div>
-                  <h1 className="display">{hero.title.split(':')[0].toUpperCase()}</h1>
-                  <p className="dek">{hero.dek}</p>
-                  <div className="meta">{`${(hero.boli || '').toUpperCase()} · ${hero.read_minutes} MIN READ`}</div>
-                  <div className="hero-ctas">
-                    <Link className="btn btn-lg" href={`/article/${hero.slug}`}>Read the full breakdown →</Link>
-                    <a className="btn btn-lg btn-ghost" href={settings.watch_url} target="_blank" rel="noopener noreferrer">
-                      <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5 L12.5 7 L2 12.5 Z" fill="currentColor" /></svg>
-                      Watch on Chaupal
-                    </a>
-                  </div>
-                </div>
-              )}
-              <Phulkari up style={{ position: 'absolute', left: 0, bottom: 0 }} />
-            </div>
-          </section>
-        ) : (
-          /* No hero → the page still gets one h1 (keeps the h1 → h2 heading order) */
-          <h1 className="sr-only">{settings.site_title}</h1>
-        )}
+        {/* HERO — always the newest live post */}
+        {hero ? <HeroBanner post={hero} settings={settings} /> : <h1 className="sr-only">{settings.site_title}</h1>}
+
+        {/* RAILS */}
+        {rails.length ? (
+          <div className="rails wrap">
+            {rails.map((r) => (
+              <PostRail key={r.id} id={r.id} title={r.title} posts={r.posts} href={r.href} />
+            ))}
+          </div>
+        ) : null}
 
         {/* TOP 10 */}
         {top10.length ? (
@@ -133,65 +139,6 @@ export default function Home({ data }) {
             </div>
           </section>
         ) : null}
-
-        {/* LATEST */}
-        <section className="section on-band" id="latest">
-          <div className="wrap">
-            <SectionHead kicker="LATEST" title="FRESH FROM THE CHARCHA DESK" />
-            <div className="latest-grid">
-              {latest.feature ? (
-                <Link className="ocard feature" href={`/article/${latest.feature.slug}`}>
-                  <ArtGhost tone={latest.feature.art_tone} glyph={latest.feature.ghost_glyph} script={latest.feature.glyph_script} image={latest.feature.image} width={latest.feature.image_width} height={latest.feature.image_height} alt={latest.feature.image_alt || latest.feature.title} tag="STILL 16:9" />
-                  <span className="otext">
-                    <span><span className="chip fill" style={{ fontSize: 10 }}>{(latest.feature.category || '').toUpperCase()}</span></span>
-                    <span className="ot">{latest.feature.title}</span>
-                    <span className="om">{`${(latest.feature.boli || '').toUpperCase()} · ${latest.feature.read_minutes} MIN READ`}</span>
-                  </span>
-                </Link>
-              ) : null}
-              <div className="sidelist">
-                {latest.side.map((p) => (
-                  <Link key={p.id} className="srow" href={`/article/${p.slug}`}>
-                    <ArtGhost className="thumb" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} width={p.image_width} height={p.image_height} alt={p.image_alt || p.title} />
-                    <span className="st">
-                      <span className={`sk ${boliClass(p.boli)}`}>{(p.boli || p.category || '').toUpperCase()}</span>
-                      <span className="sh">{p.title}</span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div className="latest-row">
-              {latest.row[0] ? (
-                <Link className="ocard" href={`/article/${latest.row[0].slug}`}>
-                  <ArtGhost tone={latest.row[0].art_tone} glyph={latest.row[0].ghost_glyph} script={latest.row[0].glyph_script} image={latest.row[0].image} width={latest.row[0].image_width} height={latest.row[0].image_height} alt={latest.row[0].title} />
-                  <span className="otext">
-                    <span className="sk c-acc">{(latest.row[0].category || '').toUpperCase()}</span>
-                    <span className="ot">{latest.row[0].title}</span>
-                  </span>
-                </Link>
-              ) : null}
-              {quiz || poll ? (
-                <a className="ocard" href="#play">
-                  <span className="art qcard"><span className="qword">QUIZ TIME</span></span>
-                  <span className="otext">
-                    <span className="sk c-acc">QUIZ</span>
-                    <span className="ot">{quiz ? quiz.title : 'Kaunsi Chaupal film hai tuhadi weekend match?'}</span>
-                  </span>
-                </a>
-              ) : null}
-              {latest.row[1] ? (
-                <Link className="ocard" href={`/article/${latest.row[1].slug}`}>
-                  <ArtGhost tone={latest.row[1].art_tone} glyph={latest.row[1].ghost_glyph} script={latest.row[1].glyph_script} image={latest.row[1].image} width={latest.row[1].image_width} height={latest.row[1].image_height} alt={latest.row[1].title} />
-                  <span className="otext">
-                    <span className="sk c-acc">{(latest.row[1].category || '').toUpperCase()}</span>
-                    <span className="ot">{latest.row[1].title}</span>
-                  </span>
-                </Link>
-              ) : null}
-            </div>
-          </div>
-        </section>
 
         {/* WHAT TO WATCH */}
         {picks.length ? (
@@ -232,7 +179,7 @@ export default function Home({ data }) {
                   const colors = ['var(--acc)', 'var(--hv)', 'var(--bj)'];
                   const texts = ['c-acc', 'c-hv', 'c-bj'];
                   return (
-                    <a key={h.slug} className={`hub hubtone-${i + 1}`} href="#latest">
+                    <a key={h.slug} className={`hub hubtone-${i + 1}`} href="/latest">
                       <span className={`bigglyph ${i === 0 ? 'glyph-gurmukhi' : 'glyph-devanagari'}`} aria-hidden="true" style={{ color: colors[i], opacity: i === 0 ? 0.16 : 0.18 }}>
                         {glyphs[h.slug] || 'ਚ'}
                       </span>
@@ -285,7 +232,7 @@ export default function Home({ data }) {
                   <h2 className="display">{titleHub.title}</h2>
                   <p>{titleHub.blurb}</p>
                   <div className="tabs">
-                    <Link className="pill" href="#latest">News</Link>
+                    <Link className="pill" href="/latest">News</Link>
                     {videos.length ? <Link className="pill" href="#trailers">Trailer</Link> : null}
                     <Link className="pill" href={`/article/${titleHub.article_slug}`}>Episode guide</Link>
                     <a className="pill active" href={titleHub.watch_link} target="_blank" rel="noopener noreferrer">Watch now</a>
@@ -316,7 +263,7 @@ export default function Home({ data }) {
               <SectionHead kicker="CHARCHA SESSIONS" title="INTERVIEWS & BEHIND THE SCENES" hint tight />
               <div className="vids" style={{ marginTop: 26 }}>
                 {sessions.map((s) => (
-                  <a key={s.title} className="ocard bts" href="#latest">
+                  <a key={s.title} className="ocard bts" href="/latest">
                     <span className={`art hubtone-${s.tone}`}>
                       <span className="ghost" aria-hidden="true">{s.glyph_text.split(' ').slice(0, 2).join(' ')}<br />{s.glyph_text.split(' ').slice(2).join(' ')}</span>
                     </span>

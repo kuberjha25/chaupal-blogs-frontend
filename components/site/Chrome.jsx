@@ -4,7 +4,7 @@ import { Mark, SocialLinks } from './bits';
 import { ThemeToggle } from '@/lib/ui';
 
 const NAV = [
-  { label: 'Latest', href: '/#latest' },
+  { label: 'Latest', href: '/latest' },
   { label: 'Top 10', href: '/#top10' },
   { label: 'Boli Hubs', href: '/#boli' },
   { label: 'What to Watch', href: '/#watch' },

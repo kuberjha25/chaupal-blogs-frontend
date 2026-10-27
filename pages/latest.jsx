@@ -5,12 +5,10 @@ import { ssrGet, isBackendDown, markUnavailable, withNav } from '@/lib/api';
 import Chrome from '@/components/site/Chrome';
 import Footer from '@/components/site/Footer';
 import Unavailable from '@/components/site/Unavailable';
-import { ArtGhost } from '@/components/site/bits';
+import { PostCard } from '@/components/site/Rails';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 const PER_PAGE = 12;
-const boliClass = (b) => (b === 'Haryanvi' ? 'c-hv' : b === 'Bhojpuri' ? 'c-bj' : 'c-acc');
-const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 const pageHref = (n) => (n <= 1 ? '/latest' : `/latest?page=${n}`);
 
 export async function getServerSideProps({ query, res }) {
@@ -83,16 +81,7 @@ export default function Latest({ data }) {
             {posts.length ? (
               <div className="archive-grid">
                 {posts.map((p) => (
-                  <Link key={p.id || p.slug} className="ocard" href={`/article/${p.slug}`}>
-                    <ArtGhost className="rart" tone={p.art_tone} glyph={p.ghost_glyph} script={p.glyph_script} image={p.image} width={p.image_width} height={p.image_height} alt={p.image_alt || p.title} />
-                    <span className="otext">
-                      <span className={`sk ${boliClass(p.boli)}`}>{(p.category || p.boli || '').toUpperCase()}</span>
-                      <span className="ot">{p.title}</span>
-                      <span className="om">
-                        {[fmtDate(p.published_at), p.read_minutes ? `${p.read_minutes} min read` : ''].filter(Boolean).join(' · ')}
-                      </span>
-                    </span>
-                  </Link>
+                  <PostCard key={p.id || p.slug} post={p} />
                 ))}
               </div>
             ) : (
