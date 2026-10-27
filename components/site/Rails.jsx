@@ -42,22 +42,18 @@ export function PostCard({ post }) {
 }
 
 /* Netflix-Tudum style banner: always the newest post */
-export function HeroBanner({ post, settings }) {
-  const tag = post.category || post.boli || '';
+export function HeroBanner({ post }) {
+  /* The cover image already carries its own title text → show it clean, no text over it */
   return (
     <section className="tudum" id="top" aria-label="Newest story">
       <div className="tudum-inner">
-        <Link className="tudum-media" href={`/article/${post.slug}`} tabIndex={-1} aria-hidden="true">
+        <h1 className="sr-only">{post.title}</h1>
+        <Link className="tudum-media" href={`/article/${post.slug}`} aria-label={post.title}>
           <Thumb post={post} eager className="tudum-thumb" />
         </Link>
-        <div className="tudum-text">
-          {tag ? <span className="chip">{tag.toUpperCase()}</span> : null}
-          <h1 className="tudum-title">{post.title}</h1>
-          {post.dek ? <p className="tudum-dek">{post.dek}</p> : null}
+        <div className="tudum-bar wrap">
           <div className="meta">{[fmtDate(post.published_at), post.read_minutes ? `${post.read_minutes} MIN READ` : ''].filter(Boolean).join(' · ').toUpperCase()}</div>
-          <div className="hero-ctas">
-            <Link className="btn btn-lg" href={`/article/${post.slug}`}>Read story →</Link>
-          </div>
+          <Link className="btn" href={`/article/${post.slug}`}>Read story →</Link>
         </div>
       </div>
     </section>

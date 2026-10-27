@@ -817,14 +817,9 @@ body.has-nbar .toast { bottom: 90px; }
 .tudum { border-bottom: 1px solid var(--line); background: var(--bg); }
 .tudum-inner { position: relative; max-width: 1600px; margin: 0 auto; }
 .tudum-media { display: block; }
-.tudum-thumb { aspect-ratio: 21 / 9; border: 0; border-radius: 0; min-height: 420px; width: 100%; }
-.tudum-media::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(10, 10, 16, 0.92) 0%, rgba(10, 10, 16, 0.6) 45%, rgba(10, 10, 16, 0.05) 80%), linear-gradient(0deg, rgba(10, 10, 16, 0.85) 0%, transparent 45%); }
-.tudum-text { position: absolute; left: clamp(24px, 5vw, 80px); bottom: clamp(28px, 6vw, 80px); max-width: min(620px, 60%); display: flex; flex-direction: column; gap: 14px; align-items: flex-start; color: #F3EEE3; }
-.tudum-text .chip { background: rgba(10, 10, 16, 0.55); }
-.tudum-title { margin: 0; font-family: 'Anton', 'Arial Narrow', sans-serif; font-weight: 400; letter-spacing: 0.5px; font-size: clamp(32px, 4vw, 60px); line-height: 1.05; overflow-wrap: break-word; }
-.tudum-dek { margin: 0; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: #D7D1C4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.tudum-text .meta { color: #B9B3A5; }
+.tudum-thumb { aspect-ratio: 16 / 9; border: 0; border-radius: 0; width: 100%; max-height: 78vh; }
+.tudum-thumb .pimg { object-fit: contain; }
+.tudum-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
 
 .rails { padding-block: 36px 20px; }
 .prail { margin-bottom: 36px; }
@@ -842,12 +837,5 @@ body.has-nbar .toast { bottom: 90px; }
 @media (hover: hover) and (min-width: 900px) { .prail-arrow { display: flex; } }
 
 @media (max-width: 720px) {
-  .tudum-thumb { aspect-ratio: 16 / 9; min-height: 0; }
-  .tudum-media::after { background: linear-gradient(0deg, rgba(10, 10, 16, 0.5) 0%, transparent 40%); }
-  .tudum-text { position: static; max-width: none; padding: 18px clamp(16px, 4vw, 20px) 26px; color: var(--ink); }
-  .tudum-text .chip { background: transparent; }
-  .tudum-dek { color: var(--mut); }
-  .tudum-text .meta { color: var(--dim); }
-  .tudum-text .hero-ctas, .tudum-text .btn { width: 100%; }
-  .prail-item { width: 72vw; }
+                .prail-item { width: 72vw; }
 }
