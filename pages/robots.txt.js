@@ -8,7 +8,7 @@ Disallow: /studio
 Disallow: /login
 Disallow: /api/
 
-Sitemap: ${SITE}/sitemap.xml
+Sitemap: ${SITE}/sitemap_index.xml
 `;
   res.setHeader('Content-Type', 'text/plain');
   res.write(txt);
