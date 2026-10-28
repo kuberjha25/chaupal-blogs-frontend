@@ -14,6 +14,7 @@ const ROLE_META = {
 };
 
 const I = {
+  help: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.7" /><path d="M7.8 7.9 C7.9 6.6 8.8 5.9 10 5.9 C11.3 5.9 12.2 6.7 12.2 7.8 C12.2 9.4 10 9.2 10 11.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /><circle cx="10" cy="13.9" r="1" fill="currentColor" /></svg>,
   dash: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="2" stroke="currentColor" strokeWidth="1.7" /><rect x="11" y="2.5" width="6.5" height="6.5" rx="2" stroke="currentColor" strokeWidth="1.7" /><rect x="2.5" y="11" width="6.5" height="6.5" rx="2" stroke="currentColor" strokeWidth="1.7" /><rect x="11" y="11" width="6.5" height="6.5" rx="2" stroke="currentColor" strokeWidth="1.7" /></svg>,
   posts: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 3.5 H16 V16.5 H4 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M7 7.5 H13 M7 10.5 H13 M7 13.5 H11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>,
   edit: <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 3.5 L16.5 7.5 L8 16 H4 V12 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></svg>,
@@ -59,6 +60,7 @@ const GROUPS = [
     links: [
       { href: '/studio/users', label: 'Users & roles', icon: I.users, perm: 'users' },
       { href: '/studio/settings', label: 'Settings', icon: I.set, perm: 'settings' },
+      { href: '/studio/help', label: 'Help & FAQ', icon: I.help, roles: ['admin'] },
     ],
   },
 ];

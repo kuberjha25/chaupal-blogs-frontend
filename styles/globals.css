@@ -839,3 +839,17 @@ body.has-nbar .toast { bottom: 90px; }
 @media (max-width: 720px) {
                 .prail-item { width: 72vw; }
 }
+
+/* Studio help centre */
+.helptopics { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 2px; }
+.helpsec { scroll-margin-top: 90px; gap: 6px; }
+.helpq { border-top: 1px solid var(--line); padding: 4px 0; }
+.helpq:first-of-type { border-top: 0; }
+.helpq summary { cursor: pointer; list-style: none; padding: 12px 0; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.helpq summary::-webkit-details-marker { display: none; }
+.helpq summary::after { content: '+'; color: var(--acc-text); font-size: 20px; line-height: 1; flex: none; }
+.helpq[open] summary::after { content: '–'; }
+.helpa { padding: 0 0 14px; color: var(--mut); font-size: 14px; line-height: 1.65; max-width: 780px; }
+.helpa p { margin: 0 0 10px; }
+.helpa ul { margin: 0 0 10px; padding-left: 20px; }
+.helpa li { margin: 4px 0; }
