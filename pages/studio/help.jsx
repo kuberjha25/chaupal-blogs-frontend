@@ -173,8 +173,34 @@ const SECTIONS = [
         ],
       },
       {
+        q: 'Do readers get told automatically when I publish a new story?',
+        a: [
+          'Yes — nothing to click. About a minute after a post goes live (published now, or a scheduled time that has passed) the site sends one browser push notification and one email, and never sends the same post twice.',
+          { list: [
+            'Push goes to every reader who allowed notifications. It shows the story title and dek and opens the story. It also appears in the Notifications history as "Auto · new story".',
+            'Email goes to everyone who signed up through the newsletter box and every verified reader account, except people who unsubscribed. Each email has the cover image, title, dek, a Read story button and an Unsubscribe link.',
+            'Drafts, in-review posts and future scheduled posts send nothing until they go live.',
+            'A post that went live more than 48 hours ago (for example an old import) is skipped on purpose.',
+            'Editing a published post does not send anything again.',
+          ] },
+        ],
+      },
+      {
+        q: 'Nothing was sent when I published. What do I check?',
+        a: { list: [
+          'Push needs the VAPID keys in the backend .env, and readers who clicked Allow. The Notifications page shows how many readers can be reached — 0 means nobody has allowed it yet.',
+          'Email needs EMAIL_MODE=smtp (or ses) and a working sender in the backend .env. If it is missing, the backend log says "email skipped".',
+          'Look in the backend log for lines starting with [notify] — they show how many pushes and emails were sent for each post.',
+          'Set NOTIFY_ON_PUBLISH=off in the backend .env to switch the automatic sending off completely.',
+        ] },
+      },
+      {
+        q: 'How does unsubscribing work?',
+        a: 'Every email has an Unsubscribe link (and a one-click button in Gmail and other mail apps). The person is then skipped for all future emails. If they sign up again through the newsletter box, they are subscribed again. Push notifications are switched off by the reader in their browser settings.',
+      },
+      {
         q: 'Is the newsletter live?',
-        a: 'Readers can sign up from the site, but "Send test newsletter" is still a demo response. A real mailer (SES or Mailchimp) is planned for a later phase.',
+        a: 'New-story emails are automatic, as described above. The "Send test newsletter" button in Marketing is still only a demo response; there is no manual newsletter composer yet.',
       },
     ],
   },

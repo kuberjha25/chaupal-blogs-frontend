@@ -201,7 +201,7 @@ export default function Notifications() {
                   <td data-label="Target">{n.target_count}</td>
                   <td data-label="Sent"><b className="c-ok">{n.sent_count}</b></td>
                   <td data-label="Failed">{n.failed_count}</td>
-                  <td className="tm" data-label="By">{n.created_by_name || '—'}</td>
+                  <td className="tm" data-label="By">{n.created_by_name || 'Auto · new story'}</td>
                 </tr>
               ))}
               {history && !history.length ? <tr><td colSpan={8} className="tm">No notifications sent yet.</td></tr> : null}
