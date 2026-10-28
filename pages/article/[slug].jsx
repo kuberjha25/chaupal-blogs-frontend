@@ -137,7 +137,7 @@ export default function Article({ data }) {
                   '@type': 'BreadcrumbList',
                   itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Charcha', item: SITE },
-                    { '@type': 'ListItem', position: 2, name: post.category || 'Stories', item: `${SITE}/latest` },
+                    { '@type': 'ListItem', position: 2, name: post.category || 'Stories', item: post.category_slug ? `${SITE}/category/${post.category_slug}` : `${SITE}/latest` },
                     { '@type': 'ListItem', position: 3, name: post.title, item: url },
                   ],
                 },
@@ -155,7 +155,7 @@ export default function Article({ data }) {
             <nav className="crumbs" aria-label="Breadcrumb">
               <Link href="/">Charcha</Link>
               <span aria-hidden="true">→</span>
-              <Link href="/latest">{post.category || 'Stories'}</Link>
+              <Link href={post.category_slug ? `/category/${post.category_slug}` : '/latest'}>{post.category || 'Stories'}</Link>
               <span aria-hidden="true">→</span>
               <span className="here">{post.title.split(':')[0]}</span>
             </nav>

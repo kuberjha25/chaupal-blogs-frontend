@@ -21,35 +21,37 @@ const fmtCal = (d) => {
 };
 
 const RAIL_SIZE = 12;
-const PAGE_SIZE = 24; /* API max per call */
-const PAGES = 3; /* 72 newest posts feed the hero, "Latest stories" and the category rows */
 
 export async function getServerSideProps({ res }) {
   try {
-    const [data, ...pageResults] = await Promise.all([
+    /* 3 parallel calls first: home data, newest posts (hero + "Latest stories"), category / hub list */
+    const [data, newest, tax] = await Promise.all([
       ssrGet('/api/public/home'),
-      ...Array.from({ length: PAGES }, (_, i) => ssrGet(`/api/public/posts?page=${i + 1}&limit=${PAGE_SIZE}`).catch(() => ({ posts: [] }))),
+      ssrGet(`/api/public/posts?page=1&limit=${RAIL_SIZE + 1}`),
+      ssrGet('/api/public/taxonomy').catch(() => ({ bolis: [], categories: [] })),
     ]);
     /* API returns newest first (published/scheduled date); re-sort defensively */
     const when = (p) => new Date(p.published_at || 0).getTime();
-    const all = pageResults.flatMap((r) => r.posts || []).sort((a, b) => when(b) - when(a));
+    const all = (newest.posts || []).sort((a, b) => when(b) - when(a));
     const hero = all[0] || null;
     const rest = all.slice(1);
 
     const rails = [];
     if (rest.length) rails.push({ id: 'latest', title: 'Latest stories', posts: rest.slice(0, RAIL_SIZE), href: '/latest' });
-    const group = (key) => {
-      const m = new Map();
-      for (const p of rest) {
-        if (!p[key]) continue;
-        if (!m.has(p[key])) m.set(p[key], []);
-        m.get(p[key]).push(p);
-      }
-      return [...m.entries()].sort((a, b) => b[1].length - a[1].length);
-    };
-    /* No category / hub pages exist yet → no "See all" on these rows */
-    for (const [name, posts] of group('category')) rails.push({ id: `cat-${name}`, title: name, posts: posts.slice(0, RAIL_SIZE), href: null });
-    for (const [name, posts] of group('boli')) rails.push({ id: `boli-${name}`, title: `${name} stories`, posts: posts.slice(0, RAIL_SIZE), href: null });
+
+    /* Then one row per category / boli hub that has posts, each its own call (in parallel) */
+    const terms = [
+      ...(tax.categories || []).filter((t) => t.post_count > 0).sort((a, b) => b.post_count - a.post_count).map((t) => ({ ...t, key: 'category', href: `/category/${t.slug}`, title: t.name })),
+      ...(tax.bolis || []).filter((t) => t.post_count > 0).map((t) => ({ ...t, key: 'boli', href: `/boli/${t.slug}`, title: `${t.name} stories` })),
+    ];
+    const lists = await Promise.all(
+      terms.map((t) => ssrGet(`/api/public/posts?${t.key}=${encodeURIComponent(t.slug)}&limit=${RAIL_SIZE + 1}`).catch(() => ({ posts: [] })))
+    );
+    terms.forEach((t, i) => {
+      /* The hero is never repeated in a row */
+      const posts = (lists[i].posts || []).filter((p) => !hero || p.id !== hero.id).slice(0, RAIL_SIZE);
+      if (posts.length) rails.push({ id: `${t.key}-${t.slug}`, title: t.title, posts, href: t.href });
+    });
 
     res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
     return { props: { data: { ...data, hero, rails, settings: withNav(data.settings, data) } } };
@@ -179,7 +181,7 @@ export default function Home({ data }) {
                   const colors = ['var(--acc)', 'var(--hv)', 'var(--bj)'];
                   const texts = ['c-acc', 'c-hv', 'c-bj'];
                   return (
-                    <a key={h.slug} className={`hub hubtone-${i + 1}`} href="/latest">
+                    <Link key={h.slug} className={`hub hubtone-${i + 1}`} href={`/boli/${h.slug}`}>
                       <span className={`bigglyph ${i === 0 ? 'glyph-gurmukhi' : 'glyph-devanagari'}`} aria-hidden="true" style={{ color: colors[i], opacity: i === 0 ? 0.16 : 0.18 }}>
                         {glyphs[h.slug] || 'ਚ'}
                       </span>
@@ -188,7 +190,7 @@ export default function Home({ data }) {
                         <p>{h.post_count} stories te counting — {h.name} di apni chaupal.</p>
                         <span className={`go ${texts[i]}`} style={{ fontWeight: 800, fontSize: 13 }}>Enter hub →</span>
                       </span>
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
