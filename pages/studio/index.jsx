@@ -27,7 +27,7 @@ export default function Dashboard() {
           ...raw,
           kpis: [
             { label: 'TOTAL VIEWS', value: Number(raw.views).toLocaleString('en-IN'), delta: '▲ live from DB' },
-            { label: raw.ownOnly ? 'MERE POSTS' : 'TOTAL POSTS', value: raw.posts, delta: `${raw.byStatus.published || 0} published` },
+            { label: raw.ownOnly ? 'MY POSTS' : 'TOTAL POSTS', value: raw.posts, delta: `${raw.byStatus.published || 0} published` },
             { label: 'SUBSCRIBERS', value: Number(raw.subscribers).toLocaleString('en-IN'), delta: '▲ Chitthi list' },
             { label: 'AVG READ TIME', value: raw.avgRead, delta: '▲ steady' },
           ],
@@ -43,14 +43,14 @@ export default function Dashboard() {
     <StudioLayout title="Dashboard">
       {err ? <div className="errbox">{err}</div> : null}
       {!d ? (
-        <div className="loading">DATA AA RAHA…</div>
+        <div className="loading">LOADING DATA…</div>
       ) : (
         <>
           <div className="vhead">
             <div className="vh">
               <span className="rule" aria-hidden="true" />
               <h2 className="display">SAT SRI AKAL, {user.name.split(' ')[0].toUpperCase()}</h2>
-              <span className="sub">{d.ownOnly ? 'Tuhade apne posts da haal — desk view.' : 'Poore Chaupal Te Charcha da haal, ik nazar vich.'}</span>
+              <span className="sub">{d.ownOnly ? 'How your own posts are doing — desk view.' : 'The whole of Chaupal Te Charcha at a glance.'}</span>
             </div>
             <Can perm="edit-content">
               <Link className="btn" href="/studio/editor">+ New post</Link>
@@ -99,34 +99,34 @@ export default function Dashboard() {
             <Can perm="publish">
               <div className="card widget">
                 <span className="ct">REVIEW QUEUE</span>
-                <p><b>{d.reviewCount}</b> post{d.reviewCount === 1 ? '' : 's'} review vich — publish da button tuhade kol hai.</p>
+                <p><b>{d.reviewCount}</b> post{d.reviewCount === 1 ? '' : 's'} in review — you have the publish button.</p>
                 <Link className="act" href="/studio/posts" style={{ alignSelf: 'flex-start' }}>Open posts →</Link>
               </div>
             </Can>
             <Can perm="submit">
               <div className="card widget" style={{ borderLeftColor: 'var(--ok)' }}>
-                <span className="ct">TUHADI QUEUE</span>
-                <p><b>{d.reviewCount}</b> post review vich. Draft save karo, phir Submit for review.</p>
-                <Link className="act" href="/studio/editor" style={{ alignSelf: 'flex-start' }}>Likhna shuru →</Link>
+                <span className="ct">YOUR QUEUE</span>
+                <p><b>{d.reviewCount}</b> in review. Save a draft, then Submit for review.</p>
+                <Link className="act" href="/studio/editor" style={{ alignSelf: 'flex-start' }}>Start writing →</Link>
               </div>
             </Can>
             <Can perm="edit-meta">
               <div className="card widget" style={{ borderLeftColor: 'var(--hv)' }}>
                 <span className="ct">SEO NOTE</span>
-                <p><b>{d.seoMissing}</b> published post{d.seoMissing === 1 ? '' : 's'} di meta description missing hai.</p>
+                <p><b>{d.seoMissing}</b> published post{d.seoMissing === 1 ? '' : 's'} missing a meta description.</p>
                 <Link className="act" href="/studio/seo" style={{ alignSelf: 'flex-start' }}>Fix in SEO →</Link>
               </div>
             </Can>
             <Can perm="utm">
               <div className="card widget" style={{ borderLeftColor: 'var(--bj)' }}>
                 <span className="ct">CAMPAIGN</span>
-                <p>{d.liveCampaign ? <><b>{d.liveCampaign.name}</b> live hai — UTM links marketing tab vich.</> : 'Koi live campaign nahi — nava banao.'}</p>
+                <p>{d.liveCampaign ? <><b>{d.liveCampaign.name}</b> is live — UTM links are in the Marketing tab.</> : 'No live campaign — create a new one.'}</p>
                 <Link className="act" href="/studio/marketing" style={{ alignSelf: 'flex-start' }}>Marketing →</Link>
               </div>
             </Can>
             <div className="card widget" style={{ borderLeftColor: 'var(--strong)' }}>
               <span className="ct">COMMENTS</span>
-              <p><b>{d.pendingComments}</b> comment{d.pendingComments === 1 ? '' : 's'} moderation queue vich.</p>
+              <p><b>{d.pendingComments}</b> comment{d.pendingComments === 1 ? '' : 's'} in the moderation queue.</p>
               <Can perm="approve">
                 <Link className="act" href="/studio/comments" style={{ alignSelf: 'flex-start' }}>Moderate →</Link>
               </Can>

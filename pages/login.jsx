@@ -31,7 +31,7 @@ export default function Login() {
       await login(e, p);
       router.push('/studio');
     } catch (ex) {
-      setErr(ex.message || 'Login fail — backend chal raha hai?');
+      setErr(ex.message || 'Login failed — is the backend running?');
     }
     setBusy(false);
   };
@@ -54,8 +54,8 @@ export default function Login() {
           </Link>
           <div className="brandcopy">
             <span className="rule" aria-hidden="true" />
-            <h1 className="display">IK DESK. TINN BOLIS. SAARI CHARCHA.</h1>
-            <p>The Chaupal Te Charcha content studio — publish stories, tune SEO, run campaigns te manage the team, sab ik jagah ton.</p>
+            <h1 className="display">ONE DESK. THREE BOLIS. ALL THE CHARCHA.</h1>
+            <p>The Chaupal Te Charcha content studio — publish stories, tune SEO, run campaigns and manage the team, all in one place.</p>
           </div>
           <Link className="backlink" href="/">← Back to Chaupal Te Charcha</Link>
           <span className="bigghost gurmukhi" aria-hidden="true">ਚ</span>
@@ -66,7 +66,7 @@ export default function Login() {
           <div className="panel">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <h2 className="display">SIGN IN TO THE STUDIO</h2>
-              <span className="sub">Role decides what you see inside — admin sab kuchh, baki roles conditional.</span>
+              <span className="sub">Role decides what you see inside — admin sees everything, other roles see what they need.</span>
             </div>
 
             {process.env.NODE_ENV !== 'production' ? (
@@ -95,7 +95,7 @@ export default function Login() {
             <form className="form" onSubmit={(e) => { e.preventDefault(); doLogin(email, pass); }}>
               <div className="field">
                 <label htmlFor="email">EMAIL</label>
-                <input id="email" type="email" placeholder="tusi@chaupal.com" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input id="email" type="email" placeholder="you@chaupal.com" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="field">
                 <label htmlFor="pass">PASSWORD</label>
@@ -103,7 +103,7 @@ export default function Login() {
               </div>
               <button className="btn" type="submit" disabled={busy} style={{ height: 50 }}>{busy ? 'Signing in…' : 'Sign in →'}</button>
               {process.env.NODE_ENV !== 'production' ? (
-                <p className="note">Seeded password sab accounts da: <b>{DEMO_PASS}</b>. Production vich pehli login te change karwana.</p>
+                <p className="note">Password for all seeded accounts: <b>{DEMO_PASS}</b>. Change it on first login in production.</p>
               ) : null}
             </form>
 

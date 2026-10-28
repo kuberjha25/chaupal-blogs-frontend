@@ -67,10 +67,10 @@ export default function Home({ data }) {
 
   /* Backend down / not seeded → no content on the frontend (all data comes from the API) */
   if (!data) {
-    return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao te `npm run seed` kar lo.</Unavailable>;
+    return <Unavailable>COULD NOT LOAD DATA FROM THE BACKEND — start the API on port 4000 and run `npm run seed`.</Unavailable>;
   }
 
-  const { settings, trending, hero, rails, top10, moods, picks, hubs, videos, titleHub, sessions, calendar, quiz, poll } = data;
+  const { settings, hero, rails, top10, moods, picks, hubs, videos, titleHub, sessions, calendar, quiz, poll } = data;
   const shownPicks = mood ? picks.filter((p) => p.mood === mood) : picks;
   const title = settings.seo_home_title || `${settings.site_title} — ${settings.tagline}`;
   const desc = settings.seo_home_description || settings.tagline;
@@ -104,7 +104,7 @@ export default function Home({ data }) {
         />
       </Head>
 
-      <Chrome settings={settings} trending={trending} />
+      <Chrome settings={settings} />
 
       <main id="main">
         {/* HERO — always the newest live post */}

@@ -30,7 +30,7 @@ export default function Play() {
   const endPoll = async (p) => {
     try {
       await api.patch(`/api/admin/polls/${p.id}`, { status: p.status === 'live' ? 'ended' : 'live' });
-      toast(p.status === 'live' ? 'Poll end ho gaya' : 'Poll dubara live');
+      toast(p.status === 'live' ? 'Poll ended' : 'Poll is live again');
       load();
     } catch (e) {
       toast(e.message);
@@ -40,12 +40,12 @@ export default function Play() {
   const colors = ['var(--acc)', 'var(--hv)', 'var(--bj)', 'var(--ok)'];
 
   return (
-    <StudioLayout title="Quizzes te polls">
+    <StudioLayout title="Quizzes & polls">
       <div className="vhead">
         <div className="vh">
           <span className="rule" aria-hidden="true" />
-          <h2 className="display">PLAYFUL CONTENT</h2>
-          <span className="sub">Homepage de quiz te poll widgets — live status ithe control hunda.</span>
+          <h2 className="display">QUIZZES & POLLS</h2>
+          <span className="sub">The homepage quiz and poll widgets — control their live status here.</span>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function Play() {
         <div className="card">
           <div className="ch"><span className="ct">QUIZZES</span><span className="chip sample">HOMEPAGE WIDGET</span></div>
           {!quizzes ? (
-            <div className="loading">AA RAHE…</div>
+            <div className="loading">LOADING…</div>
           ) : (
             <div className="minirows">
               {quizzes.map((q) => (
@@ -68,13 +68,13 @@ export default function Play() {
               ))}
             </div>
           )}
-          <span className="notech">Quiz de questions te results seed data vich JSON config ne — builder agla phase.</span>
+          <span className="notech">Quiz questions and results are JSON config in the seed data — a builder comes in the next phase.</span>
         </div>
 
         <div className="card">
           <div className="ch"><span className="ct">POLLS · LIVE VOTES</span></div>
           {!polls ? (
-            <div className="loading">AA RAHE…</div>
+            <div className="loading">LOADING…</div>
           ) : (
             polls.map((p) => {
               const total = p.options.reduce((s, o) => s + o.votes, 0) || 1;

@@ -12,7 +12,7 @@ const NAV = [
   { label: 'Quizzes', href: '/#play' },
 ];
 
-export default function Chrome({ settings = {}, trending = [] }) {
+export default function Chrome({ settings = {} }) {
   const [open, setOpen] = useState(false);
   const socials = settings.socials || [];
   const eco = settings.ecosystem || [];
@@ -95,23 +95,6 @@ export default function Chrome({ settings = {}, trending = [] }) {
         ))}
         <a className="btn btn-lg" href={watchUrl} target="_blank" rel="noopener noreferrer">Watch on Chaupal</a>
       </nav>
-
-      {trending.length ? (
-        <div className="ticker">
-          <div className="wrap">
-            <span className="tlabel">TRENDING</span>
-            {/* One line: the short title (before the ":"), full title on hover; swipe/scroll for more */}
-            <div className="titems">
-              {trending.map((t, i) => (
-                <span key={t.slug} style={{ display: 'contents' }}>
-                  {i > 0 && <span className="tdot" aria-hidden="true">·</span>}
-                  <Link href={`/article/${t.slug}`} title={t.title}>{t.title.split(':')[0]}</Link>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
     </>
   );
 }

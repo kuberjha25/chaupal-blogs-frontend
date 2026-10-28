@@ -53,7 +53,7 @@ export default function Readers() {
 
   const toggle = async (r) => {
     const active = isActive(r);
-    if (active && !window.confirm(`${r.name} nu deactivate karna? Oh login ate comment nahi kar sakenge.`)) return;
+    if (active && !window.confirm(`Deactivate ${r.name}? They will no longer be able to log in or comment.`)) return;
     setBusy(true);
     try {
       await api.patch(`/api/admin/readers/${r.id}`, { is_active: !active });
@@ -68,7 +68,7 @@ export default function Readers() {
   if (user && !allowed) {
     return (
       <StudioLayout title="Readers">
-        <div className="lockednote">Readers sirf admin te marketing dekh sakde hain.</div>
+        <div className="lockednote">Only admin and marketing can view readers.</div>
       </StudioLayout>
     );
   }
@@ -82,7 +82,7 @@ export default function Readers() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">READERS</h2>
-          <span className="sub">Site te sign up kitte readers — comments te notifications layi.</span>
+          <span className="sub">Readers who signed up on the site, for comments and notifications.</span>
         </div>
       </div>
 
@@ -131,10 +131,10 @@ export default function Readers() {
                 );
               })}
               {data && !rows.length ? (
-                <tr><td colSpan={cols} className="tm">{query ? 'Is search naal koi reader nahi mileya.' : 'Abhi koi reader nahi.'}</td></tr>
+                <tr><td colSpan={cols} className="tm">{query ? 'No readers match this search.' : 'No readers yet.'}</td></tr>
               ) : null}
               {!data && !err ? (
-                <tr><td colSpan={cols} className="tm">Readers aa rahe…</td></tr>
+                <tr><td colSpan={cols} className="tm">Loading readers…</td></tr>
               ) : null}
             </tbody>
           </table>

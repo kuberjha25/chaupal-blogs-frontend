@@ -57,7 +57,7 @@ export default function Article({ data }) {
   }, [data]);
 
   if (!data) {
-    return <Unavailable>BACKEND SE DATA NAHI MILA — port 4000 te API chalao.</Unavailable>;
+    return <Unavailable>COULD NOT LOAD DATA FROM THE BACKEND — start the API on port 4000.</Unavailable>;
   }
 
   const { post, toc, related, latest, settings } = data;
@@ -147,7 +147,7 @@ export default function Article({ data }) {
         />
       </Head>
 
-      <Chrome settings={settings} trending={[]} />
+      <Chrome settings={settings} />
 
       <main id="main">
         <div className="wrap" id="top">

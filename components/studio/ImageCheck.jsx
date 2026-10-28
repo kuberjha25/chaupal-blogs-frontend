@@ -41,10 +41,10 @@ export async function checkImage(file, spec) {
 
   const want = spec.width / spec.height;
   out.actual = dims(size.width, size.height);
-  if (size.width < spec.minWidth) out.issues.push(`chhoti hai — width ghatt-o-ghatt ${spec.minWidth}px chahidi`);
+  if (size.width < spec.minWidth) out.issues.push(`too small — width must be at least ${spec.minWidth}px`);
   /* Up to 2% difference is allowed (1366×768 still counts as 16:9) */
   if (Math.abs(size.width / size.height - want) / want > 0.02) {
-    out.issues.push(`ratio ${ratioLabel(spec.width, spec.height)} nahi — site te shape alag dikhegi`);
+    out.issues.push(`ratio is not ${ratioLabel(spec.width, spec.height)} — it will look different on the site`);
   }
   return out;
 }
@@ -60,13 +60,13 @@ export default function ImageCheck({ spec, result }) {
         <span className="res">
           <span className="fn">{result.name}</span>
           <span>EXPECTED <b>{result.expected}</b></span>
-          <span>ACTUAL <b>{result.actual || 'padhi nahi gayi'}</b></span>
+          <span>ACTUAL <b>{result.actual || 'could not be read'}</b></span>
           {!result.actual ? (
-            <span className="bad">⚠ Browser is format di size nahi padh sakya — check nahi hoyi</span>
+            <span className="bad">⚠ The browser could not read this format's size — check skipped</span>
           ) : result.issues.length ? (
             <span className="bad">⚠ {result.issues.join(' · ')}</span>
           ) : (
-            <span className="ok">✓ Size theek hai</span>
+            <span className="ok">✓ Size looks good</span>
           )}
         </span>
       ) : null}

@@ -33,7 +33,7 @@ export default function Footer({ settings = {} }) {
             {has('top10') ? <Link href="/#top10">Top 10</Link> : null}
             {has('watch') ? <Link href="/#watch">What to Watch</Link> : null}
             {has('trailers') ? <Link href="/#trailers">Trailers</Link> : null}
-            {has('play') ? <Link href="/#play">Quizzes te polls</Link> : null}
+            {has('play') ? <Link href="/#play">Quizzes & polls</Link> : null}
           </div>
           {has('boli') || has('sessions') ? (
             <div className="fcol">

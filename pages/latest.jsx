@@ -42,7 +42,7 @@ export async function getServerSideProps({ query, res }) {
 }
 
 export default function Latest({ data }) {
-  if (!data) return <Unavailable>BACKEND SE DATA NAHI MILA — thodi der baad try karo.</Unavailable>;
+  if (!data) return <Unavailable>COULD NOT LOAD DATA FROM THE BACKEND — please try again in a little while.</Unavailable>;
 
   const { settings, posts, page, pages, total } = data;
   const siteTitle = settings.site_title || 'Chaupal Te Charcha';
@@ -85,7 +85,7 @@ export default function Latest({ data }) {
                 ))}
               </div>
             ) : (
-              <p className="loading">Abhi koi story live nahi — jaldi aa rahi hai.</p>
+              <p className="loading">No stories are live yet — coming soon.</p>
             )}
 
             {pages > 1 ? (

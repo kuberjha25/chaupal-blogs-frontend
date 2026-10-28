@@ -36,7 +36,7 @@ export function QuizWidget({ quiz }) {
     <div className="panelcard" id="quiz">
       <div className="ptop">
         <span className="chip fill" style={{ fontSize: 10 }}>QUIZ</span>
-        <span className="plabel">{done ? 'TUHADA MATCH' : `Q${step + 1} OF ${questions.length}`}</span>
+        <span className="plabel">{done ? 'YOUR MATCH' : `Q${step + 1} OF ${questions.length}`}</span>
       </div>
       <h3>{quiz.title}</h3>
 
@@ -66,7 +66,7 @@ export function QuizWidget({ quiz }) {
               </a>
             </span>
           </div>
-          <button className="pill" type="button" onClick={retry} style={{ alignSelf: 'flex-start' }}>Dubara khedo</button>
+          <button className="pill" type="button" onClick={retry} style={{ alignSelf: 'flex-start' }}>Play again</button>
         </div>
       ) : null}
     </div>
@@ -120,7 +120,7 @@ export function PollWidget({ poll }) {
         </div>
       )}
       <p className="smallnote" style={{ margin: 0 }}>
-        {voted ? `Shukriya! ${total.toLocaleString('en-IN')} votes hun tak.` : 'Vote to see what the chaupal thinks.'}
+        {voted ? `Thanks! ${total.toLocaleString('en-IN')} votes so far.` : 'Vote to see what the chaupal thinks.'}
       </p>
     </div>
   );
@@ -152,14 +152,14 @@ export function NewsletterForm() {
           id="nl-email"
           type="email"
           required
-          placeholder="tusi@example.com"
+          placeholder="you@example.com"
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <button className="btn" type="submit" style={{ height: 50 }}>Sign me up</button>
       </div>
-      {ok ? <span className="nl-ok">Shukriya! Chitthi tuhade raah vich hai.</span> : null}
+      {ok ? <span className="nl-ok">Thanks! The newsletter is on its way.</span> : null}
       {err ? <span className="nl-ok" style={{ color: 'var(--bj)' }}>{err}</span> : null}
     </form>
   );

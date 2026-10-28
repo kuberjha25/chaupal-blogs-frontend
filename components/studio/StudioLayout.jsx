@@ -41,7 +41,7 @@ const GROUPS = [
       { href: '/studio/posts', label: 'Posts', icon: I.posts, perm: 'posts' },
       { href: '/studio/editor', label: 'New post', icon: I.edit, perm: 'edit-content' },
       { href: '/studio/media', label: 'Media', icon: I.media, perm: 'media' },
-      { href: '/studio/play', label: 'Quizzes te polls', icon: I.play, perm: 'playful' },
+      { href: '/studio/play', label: 'Quizzes & polls', icon: I.play, perm: 'playful' },
     ],
   },
   {
@@ -57,7 +57,7 @@ const GROUPS = [
   {
     head: 'ADMIN', perm: 'users,settings',
     links: [
-      { href: '/studio/users', label: 'Users te roles', icon: I.users, perm: 'users' },
+      { href: '/studio/users', label: 'Users & roles', icon: I.users, perm: 'users' },
       { href: '/studio/settings', label: 'Settings', icon: I.set, perm: 'settings' },
     ],
   },
@@ -90,7 +90,7 @@ export default function StudioLayout({ title, children }) {
     return (
       <>
         {head}
-        <div className="loading" style={{ minHeight: '100vh' }}>STUDIO KHUL RAHA HAI…</div>
+        <div className="loading" style={{ minHeight: '100vh' }}>OPENING STUDIO…</div>
       </>
     );
   }

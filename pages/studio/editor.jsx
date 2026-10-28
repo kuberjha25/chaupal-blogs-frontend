@@ -7,7 +7,7 @@ import { api, mediaUrl } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/lib/ui';
 
-const RichEditor = dynamic(() => import('@/components/studio/RichEditor'), { ssr: false, loading: () => <div className="loading">EDITOR LOAD HO RAHA…</div> });
+const RichEditor = dynamic(() => import('@/components/studio/RichEditor'), { ssr: false, loading: () => <div className="loading">LOADING EDITOR…</div> });
 
 const EMPTY = {
   title: '', dek: '', body: '', boli_id: '', category_id: '', tags: '',
@@ -64,7 +64,7 @@ export default function EditorPage() {
     try {
       const d = await api.upload('/api/admin/media', fd);
       setP((s) => ({ ...s, featured_media_id: d.media.id, featured_path: d.media.url_path }));
-      toast('Featured image WebP ban ke save ho gayi ✓');
+      toast('Featured image saved as WebP ✓');
     } catch (e) {
       toast(`Upload fail: ${e.message}`);
     }
@@ -93,7 +93,7 @@ export default function EditorPage() {
     try {
       const d = id ? await api.put(`/api/admin/posts/${id}`, payload) : await api.post('/api/admin/posts', payload);
       toast(
-        d.status === 'published' ? 'Publish ho gaya ✓' : d.status === 'review' ? 'Review lai submit ho gaya ✓' : d.status === 'scheduled' ? 'Schedule ho gaya ✓' : 'Draft save ho gaya ✓'
+        d.status === 'published' ? 'Published ✓' : d.status === 'review' ? 'Submitted for review ✓' : d.status === 'scheduled' ? 'Scheduled ✓' : 'Draft saved ✓'
       );
       if (!id && d.id) router.replace(`/studio/editor?id=${d.id}`);
       else setP((s) => ({ ...s, status: d.status, slug: d.slug }));
@@ -108,17 +108,17 @@ export default function EditorPage() {
   return (
     <StudioLayout title={id ? 'Edit post' : 'New post'}>
       {!loaded ? (
-        <div className="loading">POST AA RAHA…</div>
+        <div className="loading">LOADING POST…</div>
       ) : (
         <div className="edgrid">
           <div className="edcol">
             <div className="field titlefield">
               <label htmlFor="pt">POST TITLE</label>
-              <input id="pt" value={p.title} onChange={set('title')} placeholder="Story da title…" disabled={metaOnly} />
+              <input id="pt" value={p.title} onChange={set('title')} placeholder="Story title…" disabled={metaOnly} />
             </div>
             <div className="field">
               <label htmlFor="pd">DEK / STANDFIRST</label>
-              <textarea id="pd" rows={2} value={p.dek || ''} onChange={set('dek')} placeholder="Ik line vich story da saar…" disabled={metaOnly} />
+              <textarea id="pd" rows={2} value={p.dek || ''} onChange={set('dek')} placeholder="A one-line summary of the story…" disabled={metaOnly} />
             </div>
             <div className="card" style={{ padding: 14 }}>
               <span className="ct">FEATURED IMAGE · AUTO-WEBP</span>
@@ -132,10 +132,10 @@ export default function EditorPage() {
                 ) : null}
               </div>
               {!metaOnly ? <ImageCheck spec={IMAGE_SPECS.featured} result={imgCheck} /> : null}
-              <span className="notech">Koi vi format upload karo — server WebP bana ke save karda (production S3 swap-ready).</span>
+              <span className="notech">Upload any format — the server saves it as WebP (production S3 swap-ready).</span>
             </div>
             {metaOnly ? (
-              <div className="lockednote">SEO role — body locked hai. Heading, meta te slug thalle SEO card ton edit karo.</div>
+              <div className="lockednote">SEO role — the body is locked. Edit the heading, meta and slug from the SEO card below.</div>
             ) : (
               <RichEditor value={p.body} onChange={(html) => setP((s) => ({ ...s, body: html }))} />
             )}
@@ -179,7 +179,7 @@ export default function EditorPage() {
                   <button className="btn" type="button" disabled={busy} onClick={() => save(null)}>Save meta →</button>
                 ) : null}
               </div>
-              {!can('publish') && can('submit') ? <span className="notech">Publish button desk role kol nahi — review ton baad admin/publisher live karega.</span> : null}
+              {!can('publish') && can('submit') ? <span className="notech">The desk role has no publish button — after review, an admin or publisher will take it live.</span> : null}
             </div>
 
             <div className="card">
@@ -219,7 +219,7 @@ export default function EditorPage() {
                 </div>
                 <div className="field">
                   <label htmlFor="sl">URL SLUG</label>
-                  <input id="sl" value={p.slug || ''} onChange={set('slug')} placeholder="auto ban jayega title ton" />
+                  <input id="sl" value={p.slug || ''} onChange={set('slug')} placeholder="auto-generated from the title" />
                 </div>
                 <div className="field">
                   <label htmlFor="fk">FOCUS KEYWORD</label>
@@ -229,7 +229,7 @@ export default function EditorPage() {
             </Can>
 
             <div className="card">
-              <span className="ct">GHOST ART · JADO IMAGE NA HOVE</span>
+              <span className="ct">GHOST ART · USED WHEN THERE IS NO IMAGE</span>
               <div className="field">
                 <label htmlFor="gg">GLYPH</label>
                 <input id="gg" value={p.ghost_glyph || ''} onChange={set('ghost_glyph')} maxLength={4} disabled={metaOnly} />

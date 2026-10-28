@@ -26,7 +26,7 @@ export default function Media() {
     fd.append('alt', file.name.replace(/\.[^.]+$/, ''));
     try {
       const d = await api.upload('/api/admin/media', fd);
-      toast(`${d.media.filename} — WebP ban ke save ho gayi ✓ (${Math.round(d.media.size_bytes / 1024)} KB)`);
+      toast(`${d.media.filename} — saved as WebP ✓ (${Math.round(d.media.size_bytes / 1024)} KB)`);
       load();
     } catch (e) {
       toast(`Upload fail: ${e.message}`);
@@ -35,10 +35,10 @@ export default function Media() {
   };
 
   const del = async (id) => {
-    if (!window.confirm('Media file delete karni? Posts vich reference hat jayega.')) return;
+    if (!window.confirm('Delete this media file? It will be removed from any posts that use it.')) return;
     try {
       await api.del(`/api/admin/media/${id}`);
-      toast('Delete ho gayi');
+      toast('Deleted');
       load();
     } catch (e) {
       toast(e.message);
@@ -51,7 +51,7 @@ export default function Media() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">MEDIA LIBRARY</h2>
-          <span className="sub">Jo vi upload karo — JPG, PNG, HEIC — server aap hi WebP bana ke save karda hai.</span>
+          <span className="sub">Upload JPG, PNG or HEIC — the server converts it to WebP automatically.</span>
         </div>
         <label className="btn" style={{ cursor: 'pointer' }}>
           {busy ? 'Uploading…' : '↑ Upload image'}
@@ -61,9 +61,9 @@ export default function Media() {
       <ImageCheck spec={IMAGE_SPECS.featured} result={check} />
 
       {!rows ? (
-        <div className="loading">MEDIA AA RAHI…</div>
+        <div className="loading">LOADING MEDIA…</div>
       ) : rows.length === 0 ? (
-        <div className="lockednote">Library khali hai — pehli image upload karo. WebP + resize automatic.</div>
+        <div className="lockednote">The library is empty — upload your first image. WebP conversion and resizing are automatic.</div>
       ) : (
         <div className="mediagrid">
           {rows.map((m) => (

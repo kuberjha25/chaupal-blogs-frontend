@@ -26,7 +26,7 @@ export default function Settings() {
     setBusy(true);
     try {
       await api.put('/api/admin/settings', { settings: s });
-      toast('Settings save ho gaye ✓ — site turant update');
+      toast('Settings saved ✓ — the site updates right away');
     } catch (e) {
       toast(e.message);
     }
@@ -39,13 +39,13 @@ export default function Settings() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">SITE SETTINGS</h2>
-          <span className="sub">Identity, socials te footer — sab settings table ton, site live padh di hai.</span>
+          <span className="sub">Identity, socials and footer — all stored in the settings table and read live by the site.</span>
         </div>
         <button className="btn" type="button" disabled={busy || !s} onClick={save}>{busy ? 'Saving…' : 'Save settings'}</button>
       </div>
 
       {!s ? (
-        <div className="loading">SETTINGS AA RAHE…</div>
+        <div className="loading">LOADING SETTINGS…</div>
       ) : (
         <div className="playgrid">
           <div className="stackcol">
@@ -78,7 +78,7 @@ export default function Settings() {
                 </div>
               </div>
             ))}
-            <span className="notech">Header, footer te article sidebar — sab inhi links nu use karde ne.</span>
+            <span className="notech">The header, footer and article sidebar all use these links.</span>
           </div>
         </div>
       )}

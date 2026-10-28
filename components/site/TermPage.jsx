@@ -9,7 +9,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 /* A category or boli hub archive — same card grid and pager as /latest */
 export default function TermPage({ data }) {
-  if (!data) return <Unavailable>BACKEND SE DATA NAHI MILA — thodi der baad try karo.</Unavailable>;
+  if (!data) return <Unavailable>COULD NOT LOAD DATA FROM THE BACKEND — please try again in a little while.</Unavailable>;
 
   const { kind, term, settings, posts, page, pages, total } = data;
   const base = `${kind === 'boli' ? '/boli' : '/category'}/${term.slug}`;
@@ -54,7 +54,7 @@ export default function TermPage({ data }) {
                 {posts.map((p) => <PostCard key={p.id || p.slug} post={p} />)}
               </div>
             ) : (
-              <p className="loading">Abhi is section me koi story live nahi — jaldi aa rahi hai. <Link href="/latest">Latest stories dekho →</Link></p>
+              <p className="loading">No stories are live in this section yet — coming soon. <Link href="/latest">See the latest stories →</Link></p>
             )}
 
             {pages > 1 ? (

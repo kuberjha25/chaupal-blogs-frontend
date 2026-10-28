@@ -16,7 +16,7 @@ const ROLE_CH = {
 const MATRIX_ROWS = [
   ['dashboard', 'Dashboard'], ['posts', 'Posts list'], ['edit-content', 'Edit content'], ['submit', 'Submit for review'],
   ['publish', 'Publish / schedule'], ['delete', 'Delete posts'], ['edit-meta', 'Edit SEO meta'], ['media', 'Media library'],
-  ['playful', 'Quizzes te polls'], ['seo', 'SEO tools'], ['marketing', 'Marketing tools'], ['utm', 'UTM builder'],
+  ['playful', 'Quizzes & polls'], ['seo', 'SEO tools'], ['marketing', 'Marketing tools'], ['utm', 'UTM builder'],
   ['approve', 'Moderate comments'], ['users', 'Manage users'], ['settings', 'Site settings'],
 ];
 const PERM_LABEL = Object.fromEntries(MATRIX_ROWS);
@@ -25,7 +25,7 @@ const PERM_LABEL = Object.fromEntries(MATRIX_ROWS);
 function roleSummary(perms) {
   if (!Array.isArray(perms)) return '';
   if (!perms.length) return 'No access to anything yet.';
-  if (MATRIX_ROWS.every(([k]) => perms.includes(k))) return 'Full access — content, publishing, SEO, marketing, users te site settings.';
+  if (MATRIX_ROWS.every(([k]) => perms.includes(k))) return 'Full access — content, publishing, SEO, marketing, users and site settings.';
   return `Can: ${perms.map((k) => (PERM_LABEL[k] || k).toLowerCase()).join(', ')}.`;
 }
 
@@ -82,7 +82,7 @@ function useCopy() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } else {
-      toast('Copy nahi hoya — password select karke manually copy karo');
+      toast('Copy failed — select the password and copy it manually');
     }
   };
   return [copied, copy];
@@ -130,7 +130,7 @@ function OneTimePassword({ who, password, onDone }) {
         <button className="btn sm" type="button" onClick={() => copy(password)}>{copied ? 'Copied ✓' : 'Copy password'}</button>
         <button className="btn sm btn-ghost" type="button" onClick={onDone}>Done — hide it</button>
       </div>
-      <span className="notech">Eh password dobara nahi dikhega. Copy karke user nu kise safe tareeke naal bhejo.</span>
+      <span className="notech">This password will not be shown again. Copy it and send it to the user through a secure channel.</span>
     </div>
   );
 }
@@ -188,11 +188,11 @@ export default function Users() {
     }
   };
 
-  const changeRole = (u, role) => update(u, { role }, `${u.name} hun ${ROLE_LABEL[role] || role} ✓`);
+  const changeRole = (u, role) => update(u, { role }, `${u.name} is now ${ROLE_LABEL[role] || role} ✓`);
 
   const toggleActive = (u) => {
     const active = isActive(u);
-    if (active && !window.confirm(`${u.name} nu deactivate karna? Oh sign in nahi kar sakenge.`)) return;
+    if (active && !window.confirm(`Deactivate ${u.name}? They will no longer be able to sign in.`)) return;
     update(u, { is_active: !active }, active ? `${u.name} deactivated` : `${u.name} active ✓`);
   };
 
@@ -234,19 +234,19 @@ export default function Users() {
 
   if (user && !allowed) {
     return (
-      <StudioLayout title="Users te roles">
-        <div className="lockednote">Users te roles sirf admin manage kar sakda hai.</div>
+      <StudioLayout title="Users & roles">
+        <div className="lockednote">Only admin can manage users and roles.</div>
       </StudioLayout>
     );
   }
 
   return (
-    <StudioLayout title="Users te roles">
+    <StudioLayout title="Users & roles">
       <div className="vhead">
         <div className="vh">
           <span className="rule" aria-hidden="true" />
-          <h2 className="display">TEAM TE PERMISSIONS</h2>
-          <span className="sub">Role badlo, access band/chalu karo, password reset karo — matrix thalle live hai.</span>
+          <h2 className="display">TEAM & PERMISSIONS</h2>
+          <span className="sub">Change roles, enable or disable access and reset passwords — the live permissions matrix is below.</span>
         </div>
         <a className="btn sm" href="#add-user">+ Add user</a>
       </div>
@@ -277,7 +277,7 @@ export default function Users() {
                 return (
                   <Fragment key={u.id}>
                     <tr className={active ? '' : 'inactive'}>
-                      <td className="tt">{u.name}{self ? <span className="tm"> · tusi</span> : null}</td>
+                      <td className="tt">{u.name}{self ? <span className="tm"> · you</span> : null}</td>
                       <td className="tm uemail" data-label="Email">{u.email}</td>
                       <td data-label="Role">
                         <span className="rolechip" style={{ background: rc.bg, color: rc.c }}>{(ROLE_LABEL[u.role] || u.role || '').toUpperCase()}</span>
@@ -295,7 +295,7 @@ export default function Users() {
                             value={u.role}
                             onChange={(e) => changeRole(u, e.target.value)}
                             disabled={busy || self}
-                            title={self ? 'Apna role khud nahi badal sakde' : undefined}
+                            title={self ? 'You cannot change your own role' : undefined}
                             aria-label={`Change role for ${u.name}`}
                           >
                             {roles.map((r) => <option key={r} value={r}>{ROLE_LABEL[r] || r}</option>)}
@@ -305,7 +305,7 @@ export default function Users() {
                             type="button"
                             onClick={() => toggleActive(u)}
                             disabled={busy || self}
-                            title={self ? 'Apna account khud deactivate nahi kar sakde' : undefined}
+                            title={self ? 'You cannot deactivate your own account' : undefined}
                           >
                             {active ? 'Deactivate' : 'Activate'}
                           </button>
@@ -333,7 +333,7 @@ export default function Users() {
                 );
               })}
               {rows && !rows.length ? (
-                <tr><td colSpan={6} className="tm">Koi user nahi.</td></tr>
+                <tr><td colSpan={6} className="tm">No users.</td></tr>
               ) : null}
             </tbody>
           </table>
@@ -357,7 +357,7 @@ export default function Users() {
               <select id="inr" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} aria-describedby="inr-desc">
                 {roles.map((r) => <option key={r} value={r}>{ROLE_LABEL[r] || r}</option>)}
               </select>
-              <span className="notech" id="inr-desc">{matrix ? roleSummary(matrix[form.role]) : 'Permissions load ho rahe…'}</span>
+              <span className="notech" id="inr-desc">{matrix ? roleSummary(matrix[form.role]) : 'Loading permissions…'}</span>
             </div>
             <PasswordField id="inp" label="PASSWORD" value={form.password} onChange={(password) => setForm({ ...form, password })} />
             {formErr ? <div className="errbox" role="alert">{formErr}</div> : null}
@@ -366,7 +366,7 @@ export default function Users() {
         </div>
 
         <div className="card" style={{ padding: 0 }}>
-          <div className="ch" style={{ padding: '18px 20px 0' }}><span className="ct">PERMISSIONS MATRIX · BACKEND TON LIVE</span></div>
+          <div className="ch" style={{ padding: '18px 20px 0' }}><span className="ct">PERMISSIONS MATRIX · LIVE FROM BACKEND</span></div>
           <div className="tscroll flat">
             <table className="tbl" style={{ minWidth: 520 }}>
               <thead>

@@ -22,16 +22,16 @@ export default function Marketing() {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(utm);
-      toast('UTM link copy ho gaya ✓');
+      toast('UTM link copied ✓');
     } catch (e) {
-      toast('Copy fail — manually select karo');
+      toast('Copy failed — select it manually');
     }
   };
 
   const saveCampaign = async () => {
     try {
       await api.post('/api/admin/marketing/campaigns', { name: u.campaign, channel: u.source, utm_url: utm });
-      toast('Campaign save ho gaya ✓');
+      toast('Campaign saved ✓');
       load();
     } catch (e) {
       toast(e.message);
@@ -62,12 +62,12 @@ export default function Marketing() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">MARKETING DESK</h2>
-          <span className="sub">UTM links, campaigns te Chitthi newsletter — growth da adda.</span>
+          <span className="sub">UTM links, campaigns and the Chitthi newsletter — the growth desk.</span>
         </div>
       </div>
 
       {!d ? (
-        <div className="loading">DATA AA RAHA…</div>
+        <div className="loading">LOADING DATA…</div>
       ) : (
         <>
           <div className="playgrid">
@@ -104,8 +104,8 @@ export default function Marketing() {
                     <div key={s.email} className="mrow"><span className="mt">{s.email}</span><span className="md">{new Date(s.created_at).toLocaleDateString('en-IN')}</span></div>
                   ))}
                 </div>
-                <button className="btn btn-ghost sm" type="button" onClick={sendTest} style={{ alignSelf: 'flex-start' }}>Send test chitthi</button>
-                <span className="notech">Real mailer (SES/Mailchimp) agla phase — hun demo response.</span>
+                <button className="btn btn-ghost sm" type="button" onClick={sendTest} style={{ alignSelf: 'flex-start' }}>Send test newsletter</button>
+                <span className="notech">A real mailer (SES/Mailchimp) comes in the next phase — this is a demo response for now.</span>
               </div>
               <div className="card">
                 <span className="ct">HOMEPAGE PROMO SLOTS</span>
@@ -115,7 +115,7 @@ export default function Marketing() {
                     <span className="status st-sch">{p.status}</span>
                   </div>
                 ))}
-                <span className="notech">Slots settings table vich — Settings tab ton admin badal sakda.</span>
+                <span className="notech">Slots are stored in the settings table — admin can change them from the Settings tab.</span>
               </div>
             </div>
           </div>

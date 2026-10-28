@@ -21,7 +21,7 @@ export default function Seo() {
     e.preventDefault();
     try {
       await api.post('/api/admin/seo/redirects', { from_path: from, to_path: to });
-      toast('301 redirect add ho gaya ✓');
+      toast('301 redirect added ✓');
       setFrom('');
       setTo('');
       load();
@@ -52,17 +52,17 @@ export default function Seo() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">SEO COMMAND</h2>
-          <span className="sub">Meta lens, keywords te 301 redirects — Google layi sab tight.</span>
+          <span className="sub">Meta lens, keywords and 301 redirects — everything tuned for Google.</span>
         </div>
       </div>
 
       {!d ? (
-        <div className="loading">DATA AA RAHA…</div>
+        <div className="loading">LOADING DATA…</div>
       ) : (
         <>
           <div className="playgrid">
             <div className="card">
-              <div className="ch"><span className="ct">SITE HEALTH</span><span className="chip sample">SETTINGS TON</span></div>
+              <div className="ch"><span className="ct">SITE HEALTH</span><span className="chip sample">FROM SETTINGS</span></div>
               {(Array.isArray(d.health) ? d.health : []).map((h) => (
                 <div key={h.label} className="healthrow">
                   <span>{h.label}</span>
@@ -113,11 +113,11 @@ export default function Seo() {
             <div className="ch"><span className="ct">301 REDIRECTS · PURANE WORDPRESS URLS</span><span className="chip sample">LINK JUICE SAFE</span></div>
             <form className="two" style={{ alignItems: 'end' }} onSubmit={addRedirect}>
               <div className="field">
-                <label htmlFor="rf">FROM · PURANA PATH</label>
+                <label htmlFor="rf">FROM · OLD PATH</label>
                 <input id="rf" value={from} onChange={(e) => setFrom(e.target.value)} placeholder="/2025/10/bhai-sahab-web-series" required />
               </div>
               <div className="field">
-                <label htmlFor="rt">TO · NAVA PATH</label>
+                <label htmlFor="rt">TO · NEW PATH</label>
                 <input id="rt" value={to} onChange={(e) => setTo(e.target.value)} placeholder="/article/bhai-sahab-web-series-episode-guide" required />
               </div>
               <button className="btn" type="submit" style={{ gridColumn: '1 / -1', justifySelf: 'start' }}>+ Add 301</button>

@@ -58,8 +58,8 @@ export default function Notifications() {
     e.preventDefault();
     setFormErr('');
     setResult(null);
-    if (!title.trim() || !body.trim()) return setFormErr('Title te message dono chahide.');
-    if (!PATH_RE.test(url)) return setFormErr('Custom link "/" naal shuru hona chahida, jiwen /article/slug — poora URL ya spaces nahi.');
+    if (!title.trim() || !body.trim()) return setFormErr('Both title and message are required.');
+    if (!PATH_RE.test(url)) return setFormErr('Custom link must start with "/", for example /article/slug — no full URLs or spaces.');
     setStep('confirm');
     return undefined;
   };
@@ -85,7 +85,7 @@ export default function Notifications() {
   if (user && !allowed) {
     return (
       <StudioLayout title="Notifications">
-        <div className="lockednote">Notifications sirf admin te marketing bhej sakde hain.</div>
+        <div className="lockednote">Only admin and marketing can send notifications.</div>
       </StudioLayout>
     );
   }
@@ -99,7 +99,7 @@ export default function Notifications() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">PUSH NOTIFICATIONS</h2>
-          <span className="sub">Nawi story ya announcement — sidha readers de phone te desktop te.</span>
+          <span className="sub">A new story or announcement — sent straight to readers' phones and desktops.</span>
         </div>
         <span className="aud" aria-live="polite">
           <b>{granted === null ? '—' : granted}</b> {granted === 1 ? 'reader has' : 'readers have'} allowed notifications
@@ -204,8 +204,8 @@ export default function Notifications() {
                   <td className="tm" data-label="By">{n.created_by_name || '—'}</td>
                 </tr>
               ))}
-              {history && !history.length ? <tr><td colSpan={8} className="tm">Abhi tak koi notification nahi bheji.</td></tr> : null}
-              {!history && !loadErr ? <tr><td colSpan={8} className="tm">History aa rahi…</td></tr> : null}
+              {history && !history.length ? <tr><td colSpan={8} className="tm">No notifications sent yet.</td></tr> : null}
+              {!history && !loadErr ? <tr><td colSpan={8} className="tm">Loading history…</td></tr> : null}
             </tbody>
           </table>
         </div>

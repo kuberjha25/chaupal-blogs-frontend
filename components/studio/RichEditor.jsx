@@ -117,7 +117,7 @@ export default function RichEditor({ value = '', onChange }) {
       TableRow,
       TableHeader,
       TableCell,
-      Placeholder.configure({ placeholder: 'Story likho… headings, tables, images — sab kuchh ithe.' }),
+      Placeholder.configure({ placeholder: 'Write your story… headings, tables, images — everything goes here.' }),
     ],
     content: value,
     onUpdate: ({ editor: ed }) => onChange && onChange(ed.getHTML()),
@@ -139,7 +139,7 @@ export default function RichEditor({ value = '', onChange }) {
     return () => document.removeEventListener('mousedown', close);
   }, []);
 
-  if (!editor) return <div className="loading">EDITOR LOAD HO RAHA…</div>;
+  if (!editor) return <div className="loading">LOADING EDITOR…</div>;
 
   const c = () => editor.chain().focus();
 
@@ -175,7 +175,7 @@ export default function RichEditor({ value = '', onChange }) {
     try {
       const d = await api.upload('/api/admin/media', fd);
       c().setImage({ src: mediaUrl(d.media.url_path), alt: d.media.alt || '' }).run();
-      toast('Image WebP bana ke upload ho gayi ✓');
+      toast('Image uploaded as WebP ✓');
     } catch (e) {
       toast(`Upload fail: ${e.message}`);
     }
@@ -393,8 +393,8 @@ export default function RichEditor({ value = '', onChange }) {
 
       <ImageCheck spec={IMAGE_SPECS.inline} result={imgCheck} />
       <div className="rtestatus">
-        <span>{src ? 'HTML SOURCE MODE — &lt;/&gt; dubara dabao to render' : `${words} WORDS · ~${Math.max(1, Math.round(words / 200))} MIN READ`}</span>
-        <span>AUTO-WEBP UPLOADS · TABLES · ਗੁਰਮੁਖੀ + देवनागरी READY</span>
+        <span>{src ? 'HTML SOURCE MODE — press &lt;/&gt; again to render' : `${words} WORDS · ~${Math.max(1, Math.round(words / 200))} MIN READ`}</span>
+        <span>AUTO-WEBP UPLOADS · TABLES · GURMUKHI + DEVANAGARI READY</span>
       </div>
     </div>
   );

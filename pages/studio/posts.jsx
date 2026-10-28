@@ -33,7 +33,7 @@ export default function Posts() {
   const publish = async (id) => {
     try {
       await api.patch(`/api/admin/posts/${id}/status`, { status: 'published' });
-      toast('Post publish ho gaya ✓');
+      toast('Post published ✓');
       load();
     } catch (e) {
       toast(e.message);
@@ -41,10 +41,10 @@ export default function Posts() {
   };
 
   const del = async (id) => {
-    if (!window.confirm('Pakka delete karna? Wapas nahi aayega.')) return;
+    if (!window.confirm('Delete permanently? This cannot be undone.')) return;
     try {
       await api.del(`/api/admin/posts/${id}`);
-      toast('Post delete ho gaya');
+      toast('Post deleted');
       load();
     } catch (e) {
       toast(e.message);
@@ -56,8 +56,8 @@ export default function Posts() {
       <div className="vhead">
         <div className="vh">
           <span className="rule" aria-hidden="true" />
-          <h2 className="display">{own ? 'MERE POSTS' : 'ALL POSTS'}</h2>
-          <span className="sub">{own ? 'Sirf tuhade apne posts — desk scope.' : 'Har boli, har status — poora content.'}</span>
+          <h2 className="display">{own ? 'MY POSTS' : 'ALL POSTS'}</h2>
+          <span className="sub">{own ? 'Only your own posts — desk scope.' : 'Every boli, every status — all content.'}</span>
         </div>
         <Can perm="edit-content">
           <Link className="btn" href="/studio/editor">+ New post</Link>
@@ -70,12 +70,12 @@ export default function Posts() {
             {f === 'all' ? 'All' : ST[f][1].charAt(0) + ST[f][1].slice(1).toLowerCase()}
           </button>
         ))}
-        {own ? <span className="notech" style={{ alignSelf: 'center' }}>Desk role — apne posts hi dikhde ne.</span> : null}
+        {own ? <span className="notech" style={{ alignSelf: 'center' }}>Desk role — you only see your own posts.</span> : null}
       </div>
 
       {err ? <div className="errbox">{err}</div> : null}
       {!rows ? (
-        <div className="loading">POSTS AA RAHE…</div>
+        <div className="loading">LOADING POSTS…</div>
       ) : (
         <div className="tscroll">
           <table className="tbl">
@@ -115,7 +115,7 @@ export default function Posts() {
                 );
               })}
               {rows.length === 0 ? (
-                <tr><td colSpan={6} className="tm">Is filter vich koi post nahi.</td></tr>
+                <tr><td colSpan={6} className="tm">No posts match this filter.</td></tr>
               ) : null}
             </tbody>
           </table>

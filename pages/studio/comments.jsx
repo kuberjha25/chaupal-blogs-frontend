@@ -40,14 +40,14 @@ export default function Comments() {
         <div className="vh">
           <span className="rule" aria-hidden="true" />
           <h2 className="display">COMMENT MODERATION</h2>
-          <span className="sub">{own ? 'Sirf tuhade posts de comments.' : 'Article pages ton aaye comments — approve ya spam.'}</span>
+          <span className="sub">{own ? 'Comments on your own posts only.' : 'Comments from article pages — approve or mark as spam.'}</span>
         </div>
       </div>
 
       {!rows ? (
-        <div className="loading">COMMENTS AA RAHE…</div>
+        <div className="loading">LOADING COMMENTS…</div>
       ) : rows.length === 0 ? (
-        <div className="lockednote">Queue khali hai — koi naya comment nahi.</div>
+        <div className="lockednote">The queue is empty — no new comments.</div>
       ) : (
         <div className="card">
           {rows.map((cm) => {
