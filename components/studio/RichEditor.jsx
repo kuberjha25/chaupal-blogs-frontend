@@ -4,7 +4,6 @@ import { Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextStyle from '@tiptap/extension-text-style';
-import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import Link from '@tiptap/extension-link';
@@ -16,6 +15,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import Placeholder from '@tiptap/extension-placeholder';
 import { api, mediaUrl } from '@/lib/api';
+import { stripInlineColors } from '@/lib/postHtml';
 import { useToast } from '@/lib/ui';
 import ImageCheck, { IMAGE_SPECS, checkImage } from './ImageCheck';
 
@@ -76,8 +76,6 @@ const FONTS = [
   { v: 'ui-monospace, monospace', label: 'Mono' },
 ];
 const SIZES = ['13px', '15px', '17px', '19px', '22px', '26px', '32px', '42px'];
-const TEXT_COLORS = ['#F2B01E', '#8C5E00', '#A14A1E', '#A63563', '#1E7A4C', '#201C13', '#6E685B'];
-const HL_COLORS = ['#FFF3C4', '#FFE4D1', '#FBD8E6', '#DDF0E4', '#E9E2F1', '#DFE7F0'];
 const TABLE_STYLES = [
   { v: '', label: 'Simple grid' },
   { v: 't-gold', label: 'Gold header' },
@@ -90,7 +88,7 @@ export default function RichEditor({ value = '', onChange }) {
   const toast = useToast();
   const fileRef = useRef(null);
   const wrapRef = useRef(null);
-  const [pop, setPop] = useState(null); // 'color' | 'hl' | 'table' | null
+  const [pop, setPop] = useState(null); // 'table' | null
   const [src, setSrc] = useState(false);
   const [html, setHtml] = useState('');
   const [fs, setFs] = useState(false);
@@ -106,8 +104,8 @@ export default function RichEditor({ value = '', onChange }) {
       StarterKit.configure({ heading: { levels: [2, 3] } }),
       Underline,
       TextStyle,
-      Color,
-      Highlight.configure({ multicolor: true }),
+      /* No text colour / multicolour highlight: post text must follow the site theme (light + dark) */
+      Highlight,
       FontFamily,
       FontSize,
       Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: 'noopener noreferrer' } }),
@@ -120,6 +118,8 @@ export default function RichEditor({ value = '', onChange }) {
       Placeholder.configure({ placeholder: 'Write your story… headings, tables, images — everything goes here.' }),
     ],
     content: value,
+    /* Pasted text (Docs, Word, web pages) carries colours like color: rgb(0,0,0) — drop them */
+    editorProps: { transformPastedHTML: stripInlineColors },
     onUpdate: ({ editor: ed }) => onChange && onChange(ed.getHTML()),
   });
 
@@ -260,40 +260,8 @@ export default function RichEditor({ value = '', onChange }) {
           <B act={() => c().toggleStrike().run()} on={editor.isActive('strike')} label={<s>S</s>} title="Strikethrough" />
         </span>
 
-        {/* Text color */}
-        <span className="tanchor">
-          <button className="tbtn" type="button" title="Text color" onMouseDown={(e) => e.preventDefault()} onClick={() => setPop(pop === 'color' ? null : 'color')}>
-            A<span className="cbar" style={{ background: editor.getAttributes('textStyle').color || 'var(--acc)' }} />
-          </button>
-          <div className={`tpop${pop === 'color' ? ' open' : ''}`}>
-            <span className="prow">TEXT COLOR</span>
-            <div className="swatches">
-              {TEXT_COLORS.map((col) => (
-                <button key={col} className="sw" style={{ background: col }} type="button" aria-label={col} onClick={() => { c().setColor(col).run(); setPop(null); }} />
-              ))}
-            </div>
-            <span className="prow">
-              CUSTOM <input type="color" defaultValue="#F2B01E" onChange={(e) => c().setColor(e.target.value).run()} />
-              <button className="act" type="button" onClick={() => { c().unsetColor().run(); setPop(null); }}>Default</button>
-            </span>
-          </div>
-        </span>
-
-        {/* Highlight */}
-        <span className="tanchor">
-          <button className={`tbtn${editor.isActive('highlight') ? ' on' : ''}`} type="button" title="Highlight" onMouseDown={(e) => e.preventDefault()} onClick={() => setPop(pop === 'hl' ? null : 'hl')}>
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 13 L11 6 L14 9 L7 16 H4 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M3 18 H17" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
-          </button>
-          <div className={`tpop${pop === 'hl' ? ' open' : ''}`}>
-            <span className="prow">HIGHLIGHT</span>
-            <div className="swatches">
-              {HL_COLORS.map((col) => (
-                <button key={col} className="sw" style={{ background: col }} type="button" aria-label={col} onClick={() => { c().setHighlight({ color: col }).run(); setPop(null); }} />
-              ))}
-              <button className="sw" style={{ background: 'transparent', fontSize: 12, fontWeight: 800 }} type="button" aria-label="No highlight" onClick={() => { c().unsetHighlight().run(); setPop(null); }}>✕</button>
-            </div>
-          </div>
-        </span>
+        {/* Highlight — one theme colour (see .article-body mark) */}
+        <B act={() => c().toggleHighlight().run()} on={editor.isActive('highlight')} label={<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 13 L11 6 L14 9 L7 16 H4 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M3 18 H17" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>} title="Highlight" />
         <span className="tdiv" />
 
         <span className="tgroup">

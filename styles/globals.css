@@ -426,6 +426,24 @@ span.art.has-img .artimg { position: static; display: block; width: 100%; height
 .postbody table.t-min th, .postbody table.t-min td { border: 0; border-bottom: 1px solid var(--line); }
 .postbody table.t-card th, .postbody table.t-card td { border: 1px solid var(--line); background: var(--card2); }
 
+/* Article body — text always follows the theme. Post HTML from the editor can carry inline
+   color / background-color (paste from Docs/Word, old colour picker); those are ignored here. */
+.article-body { color: var(--ink); }
+.article-body :where(p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, span, font, strong, b, em, i, u, s, del, ins, small, sub, sup, abbr, cite, q, blockquote, figcaption, div, section, label) {
+  color: inherit !important; background-color: transparent !important; -webkit-text-fill-color: currentColor;
+}
+.article-body :where(table, thead, tbody, tfoot, tr, th, td) { color: inherit !important; background-color: transparent !important; }
+.article-body a, .article-body a :where(*) { color: var(--acc-text) !important; }
+.article-body a:hover { opacity: 0.85; }
+.article-body mark { background: var(--gold-tint) !important; color: inherit !important; padding: 0 2px; border-radius: 3px; }
+.article-body code { font-family: ui-monospace, 'Cascadia Mono', monospace; font-size: 0.88em; background: var(--card2) !important; color: var(--ink) !important; border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+.article-body pre { background: var(--band2) !important; color: var(--ink) !important; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6; }
+.article-body pre code, .article-body pre :where(*) { background: transparent !important; color: inherit !important; border: 0; padding: 0; font-size: inherit; }
+/* Table styles are re-applied above the reset */
+.article-body table.t-striped tbody tr:nth-child(even) { background-color: var(--card2) !important; }
+.article-body table.t-gold th { background-color: var(--gold-tint) !important; color: var(--acc-text) !important; }
+.article-body table.t-card th, .article-body table.t-card td { background-color: var(--card2) !important; }
+
 /* ---------------- Login ---------------- */
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); min-height: 100vh; }
 .brandside { position: relative; overflow: hidden; background: var(--band); border-right: 1px solid var(--line); display: flex; flex-direction: column; justify-content: space-between; padding: clamp(28px, 4vw, 56px); }
@@ -681,6 +699,7 @@ body.has-nbar .toast { bottom: 90px; }
 .rte .ProseMirror blockquote { border-left: 4px solid var(--acc); margin: 16px 0; padding: 4px 0 4px 18px; font-family: 'Anton', 'Arial Narrow', sans-serif; font-size: 20px; letter-spacing: 0.4px; }
 .rte .ProseMirror img { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); margin: 8px 0; }
 .rte .ProseMirror img.ProseMirror-selectednode { outline: 2px solid var(--acc); }
+.rte .ProseMirror mark { background: var(--gold-tint); color: inherit; padding: 0 2px; border-radius: 3px; }
 .rte .ProseMirror hr { border: 0; border-top: 1px solid var(--strong); margin: 18px 0; }
 .rte .ProseMirror ul, .rte .ProseMirror ol { padding-left: 26px; }
 .rte .ProseMirror li { margin: 4px 0; }

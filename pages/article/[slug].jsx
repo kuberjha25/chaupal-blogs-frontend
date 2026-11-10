@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ssrGet, absMediaUrl, isBackendDown, markUnavailable, withNav } from '@/lib/api';
+import { stripInlineColors } from '@/lib/postHtml';
 import Chrome from '@/components/site/Chrome';
 import Comments from '@/components/reader/Comments';
 import Footer from '@/components/site/Footer';
@@ -220,8 +221,8 @@ export default function Article({ data }) {
                 <figcaption className="cap">{post.image_alt || `A still from ${post.title.split(':')[0]}. Courtesy: Chaupal`}</figcaption>
               </figure>
 
-              {/* Body — HTML from the studio editor, stored in the DB */}
-              <div className="postbody" dangerouslySetInnerHTML={{ __html: post.body }} />
+              {/* Body — HTML from the studio editor, stored in the DB. Inline colours are removed so the text follows the theme. */}
+              <div className="postbody article-body" dangerouslySetInnerHTML={{ __html: stripInlineColors(post.body) }} />
 
               <div className="streamrow">
                 <a className="btn" href={settings.watch_url} target="_blank" rel="noopener noreferrer" style={{ height: 48, padding: '0 24px', fontSize: 14 }}>
