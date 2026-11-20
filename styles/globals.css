@@ -835,7 +835,7 @@ body.has-nbar .toast { bottom: 90px; }
 
 .tudum { border-bottom: 1px solid var(--line); background: var(--bg); }
 .tudum-inner { position: relative; max-width: 1600px; margin: 0 auto; }
-.tudum-media { display: block; /* fit whole image (header + bar) in one screen, never crop its text */ width: min(100%, calc((100svh - 215px) * 16 / 9)); min-width: min(100%, 320px); margin: 0 auto; }
+.tudum-media { display: block; /* fit whole image (header + bar) in one screen, never crop its text */ width: min(100%, 1200px, calc((100svh - 280px) * 16 / 9)); min-width: min(100%, 320px); margin: 0 auto; }
 .tudum-thumb { aspect-ratio: 16 / 9; border: 0; border-radius: 0; width: 100%; background: none; }
 .tudum-thumb .pimg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tudum-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
