@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StudioLayout, { Can } from '@/components/studio/StudioLayout';
 import ImageCheck, { IMAGE_SPECS, checkImage } from '@/components/studio/ImageCheck';
 import { api, mediaUrl } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/lib/ui';
+import { writePreview } from '@/lib/previewStore';
 
 const RichEditor = dynamic(() => import('@/components/studio/RichEditor'), { ssr: false, loading: () => <div className="loading">LOADING EDITOR…</div> });
 
@@ -26,6 +27,30 @@ export default function EditorPage() {
   const [loaded, setLoaded] = useState(false);
   const [imgCheck, setImgCheck] = useState(null);
   const id = router.query.id;
+  const previewOpen = useRef(false);
+
+  /* Snapshot of the unsaved form for /studio/preview */
+  const snapshot = () => ({
+    title: p.title, dek: p.dek, body: p.body, slug: p.slug, tags: p.tags,
+    seo_title: p.seo_title, seo_description: p.seo_description,
+    boli: (tax.bolis.find((b) => String(b.id) === String(p.boli_id)) || {}).name || '',
+    category: (tax.categories.find((c) => String(c.id) === String(p.category_id)) || {}).name || '',
+    featured_path: p.featured_path, art_tone: p.art_tone, ghost_glyph: p.ghost_glyph, glyph_script: p.glyph_script,
+    published_at: p.published_at || null,
+  });
+
+  const openPreview = () => {
+    previewOpen.current = true;
+    writePreview(snapshot());
+    window.open('/studio/preview', 'ctc-preview');
+  };
+
+  /* Once a preview tab has been opened, keep it live while writing */
+  useEffect(() => {
+    if (!previewOpen.current) return undefined;
+    const t = setTimeout(() => writePreview(snapshot()), 400);
+    return () => clearTimeout(t);
+  }, [p, tax]); // eslint-disable-line
 
   useEffect(() => {
     if (!user || !router.isReady) return;
@@ -162,6 +187,7 @@ export default function EditorPage() {
                 ) : null}
               </Can>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <button className="btn btn-ghost" type="button" onClick={openPreview}>Preview post ↗</button>
                 <Can perm="edit-content">
                   <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => save(can('publish') ? null : 'draft')}>Save {can('publish') ? '' : 'draft'}</button>
                 </Can>

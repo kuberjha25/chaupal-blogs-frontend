@@ -873,3 +873,6 @@ body.has-nbar .toast { bottom: 90px; }
 .helpa p { margin: 0 0 10px; }
 .helpa ul { margin: 0 0 10px; padding-left: 20px; }
 .helpa li { margin: 4px 0; }
+
+/* Studio post preview banner */
+.previewbar { position: sticky; top: 0; z-index: 100; background: var(--acc); color: var(--on-acc); text-align: center; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; padding: 8px 12px; }
